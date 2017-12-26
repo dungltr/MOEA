@@ -43,7 +43,7 @@ public class Example0 {
 	    static String MOEA_HOME = ReadFile.readhome("MOEA_Framework");
 	    static String matrix = "pf/problem";//"plan";
 	    String matrixFile = MOEA_HOME + "/"+ matrix +".csv";//ReadFile.readhome(matrix)+".csv";
-	    int Max = CsvFileReader.count(matrixFile);
+	    int Max = ReadFile.count(matrixFile);
 	    double[][] matrixMetrics = readMatrix(matrixFile, Max);
 
 	    public MO() throws IOException {
@@ -136,7 +136,7 @@ public class Example0 {
                     .withProperty("populationSize", 100)
                     .run();
             System.out.println("Num of Solutions: "+ result.size());
-            double[][] matrixResult = new double [result.size()][result.get(1).getNumberOfObjectives()];
+            double[][] matrixResult = new double [result.size()][result.get(0).getNumberOfObjectives()];
             // 2.2.4 Read solutions
             for (int m = 0; m < result.size(); m++) {
                 Solution solution = result.get(m);
