@@ -17,10 +17,13 @@
  */
 package org.moeaframework.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.moeaframework.core.comparator.DominanceComparator;
+
+import NSGAIV.writeMatrix2CSV;
 
 /**
  * Fast non-dominated sorting algorithm for dominance depth ranking. Assigns the
@@ -137,6 +140,16 @@ public class FastNondominatedSorting extends NondominatedSorting {
 			
 			rank += 1;
 			currentFront = nextFront;
+			//////////////////////////////////////
+			double[] MaxRank = new double [1];
+			MaxRank[0] = (double) rank; 
+			try {
+			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/FastNondominatedSorting.csv", MaxRank);
+			} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+			//////////////////////////////////////
 		}
 	}
 

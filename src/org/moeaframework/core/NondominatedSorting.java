@@ -16,7 +16,8 @@
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.moeaframework.core;
-
+import NSGAIV.matrixPrint;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,10 @@ import org.moeaframework.core.NondominatedPopulation.DuplicateMode;
 import org.moeaframework.core.comparator.DominanceComparator;
 import org.moeaframework.core.comparator.ObjectiveComparator;
 import org.moeaframework.core.comparator.ParetoDominanceComparator;
+import org.moeaframework.core.variable.EncodingUtils;
+import org.moeaframework.util.Vector;
+
+import NSGAIV.writeMatrix2CSV;
 
 /**
  * Non-dominated sorting algorithm for dominance depth ranking. Assigns the
@@ -96,7 +101,245 @@ public class NondominatedSorting {
 	 * @param population the population whose solutions are to be evaluated
 	 */
 	public void evaluate(Population population) {
-		List<Solution> remaining = new ArrayList<Solution>();
+	/*	
+		//////Fast Nondominated Sorting ////////////
+		int N = population.size();
+		
+		// precompute the dominance relations
+		int[][] dominanceChecks = new int[N][N];
+		
+		for (int i = 0; i < N; i++) {
+			Solution si = population.get(i);
+			
+			for (int j = i+1; j < N; j++) {
+				if (i != j) {
+					Solution sj = population.get(j);
+					
+					dominanceChecks[i][j] = comparator.compare(si, sj);
+					dominanceChecks[j][i] = -dominanceChecks[i][j];
+				}
+			}
+		}
+		
+		// compute for each solution s_i the solutions s_j that it dominates
+		// and the number of times it is dominated
+		int[] dominatedCounts = new int[N];
+		int[] dominatesCounts = new int[N];
+		int[] equivalentCounts = new int[N];
+		List<List<Integer>> dominatesList = new ArrayList<List<Integer>>();
+		List<List<Integer>> dominatedList = new ArrayList<List<Integer>>();
+		List<List<Integer>> equivalentList = new ArrayList<List<Integer>>();
+		List<Integer> currentFront = new ArrayList<Integer>();
+		List<Integer> dominatedCountList = new ArrayList<Integer>();
+		List<Integer> dominatesCountList = new ArrayList<Integer>();
+		List<Integer> equivalentCountList = new ArrayList<Integer>();
+		List<Integer> AllFront = new ArrayList<Integer>();
+		for (int i = 0; i < N; i++)
+			AllFront.add(i);
+		
+		for (int i = 0; i < N; i++) {
+			List<Integer> dominates = new ArrayList<Integer>();
+			List<Integer> dominated = new ArrayList<Integer>();
+			List<Integer> equivalent = new ArrayList<Integer>();
+			int dominatedCount = 0;
+			int dominatesCount = 0;
+			int equivalentCount = 0;
+			
+			for (int j = 0; j < N; j++) {
+				if (i != j) {
+					if (dominanceChecks[i][j] < 0) {
+						dominatesCount +=1;
+						dominates.add(j);
+					} 	else { 
+							if (dominanceChecks[j][i] < 0) {
+								dominatedCount += 1;
+								dominated.add(j);
+							}
+							else {
+								equivalentCount +=1;
+								equivalent.add(j);
+							}
+						}
+				}
+			}
+			dominatedCountList.add(dominatedCount);
+			dominatesCountList.add(dominatesCount);
+			equivalentCountList.add(equivalentCount);
+			
+			if (dominatedCount == 0) {
+				currentFront.add(i);
+			}
+			
+			dominatesList.add(dominates);
+			dominatedCounts[i] = dominatedCount;
+			
+			dominatedList.add(dominated);
+			dominatesCounts[i] = dominatesCount;
+			
+			equivalentList.add(equivalent);
+			equivalentCounts[i] = equivalentCount;
+			System.out.println("element: "+i);
+			System.out.println("dominatesList: "+dominatesList.toString());
+			System.out.println("dominatedList: "+dominatedList.toString());
+			System.out.println("equivalentList: "+equivalentList.toString());
+		}
+		Solution lala;
+		// assign ranks
+		int rank = 0;
+		////////////////////////////////////////
+		for (int m = 0; m < population.size(); m++) {
+            Solution solution = population.get(m);
+            int[] x = EncodingUtils.getInt(solution);
+            double[] objectives = solution.getObjectives();
+
+            //Negate objectives to return them to their maximized form.
+            objectives = Vector.negate(objectives);//.negate(objectives);
+
+            //2.2.5 Print results
+
+            
+            System.out.println("\n    Solution " + (m) + ":");
+            for (int i=0; i < objectives.length; i++)
+                System.out.print("      Obj "+i+": " + -objectives[i]);
+            System.out.println("    Con 1: " + solution.getConstraint(0));
+
+            for(int j=0;j<x.length;j++){
+                System.out.print("      Var " + (j+1) + ":" + x[j]+"\n");
+            }
+        }
+		///////////////////////////////////////////////
+		System.out.println("FirstFront: "+currentFront.toString());
+		System.out.println("Equivalent List: "); 
+		NSGAIV.matrixPrint.printArray(equivalentCounts);
+		for (int i=0; i<currentFront.size();i++) {
+			System.out.println("element:"+currentFront.get(i) +"has equivalent number:"+equivalentCounts[currentFront.get(i)]);
+		}
+			
+		System.out.println("AllFront: "+AllFront.toString());
+		for (int i=0; i< currentFront.size(); i++) {
+			
+			AllFront.remove(currentFront.get(i));
+		}		
+		System.out.println("NextFront: "+AllFront.toString());
+		
+		int nextFrontCount = equivalentCounts[currentFront.get(0)];
+		System.out.println("nextFrontCount------------------------------------------------"+nextFrontCount);
+		System.out.println("AllFrontCount------------------------------------------------"+AllFront.size());
+		System.out.println("currentFrontCount------------------------------------------------"+currentFront.size());
+		while (!AllFront.isEmpty()) {
+			
+			List<Integer> nextFront = new ArrayList<Integer>();
+			List<Integer> currentFrontInternal = new ArrayList<Integer>();
+			Population solutionsInFront = new Population();
+			
+			for (int i = 0; i < currentFront.size(); i++) {
+				Solution solution = population.get(currentFront.get(i));
+				solution.setAttribute(RANK_ATTRIBUTE, rank);
+				solutionsInFront.add(solution);
+			}
+			System.out.println("-------------------------");
+			updateCrowdingDistance(solutionsInFront);			
+			for (int i = 0; i < AllFront.size(); i++) {
+				if (nextFrontCount == dominatedCounts[AllFront.get(i)]) {
+					currentFrontInternal.add(AllFront.get(i));
+					//AllFront.remove(All.get(i));
+				}
+				else {
+					nextFront.add(AllFront.get(i));
+				}
+			}
+			nextFrontCount = nextFrontCount + equivalentCounts[currentFrontInternal.get(0)];
+			rank +=1;
+			
+			currentFront = currentFrontInternal;
+			AllFront = nextFront;
+			//////////////////////////////////////
+			double[] MaxRank = new double [1];
+			MaxRank[0] = (double) rank; 
+			try {
+				writeMatrix2CSV.addArray2Csv("/Users/letrungdung/maxRank.csv", MaxRank);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//////////////////////////////////////
+			////////Fast Nondominated Sorting ended//////////////////////////////
+		//////////////////
+		*/	
+		//////////////////Original Fast Non Dominated
+		
+		int N = population.size();
+		
+		// precompute the dominance relations
+		int[][] dominanceChecks = new int[N][N];
+		
+		for (int i = 0; i < N; i++) {
+			Solution si = population.get(i);
+			
+			for (int j = i+1; j < N; j++) {
+				if (i != j) {
+					Solution sj = population.get(j);
+					
+					dominanceChecks[i][j] = comparator.compare(si, sj);
+					dominanceChecks[j][i] = -dominanceChecks[i][j];
+				}
+			}
+		}
+		
+		// compute for each solution s_i the solutions s_j that it dominates
+		// and the number of times it is dominated
+		int[] dominatedCounts = new int[N];
+		List<List<Integer>> dominatesList = new ArrayList<List<Integer>>();
+		List<Integer> currentFront = new ArrayList<Integer>();
+		
+		
+		for (int i = 0; i < N; i++) {
+			List<Integer> dominates = new ArrayList<Integer>();
+			int dominatedCount = 0;
+			
+			for (int j = 0; j < N; j++) {
+				if (i != j) {
+					if (dominanceChecks[i][j] < 0) {
+						dominates.add(j);
+					} else if (dominanceChecks[j][i] < 0) {
+						dominatedCount += 1;
+					}
+				}
+			}
+			
+			if (dominatedCount == 0) {
+				currentFront.add(i);
+			}
+			
+			dominatesList.add(dominates);
+			dominatedCounts[i] = dominatedCount;
+		}
+		// assign ranks
+		int rank = 0;
+		
+		while (!currentFront.isEmpty()) {
+			List<Integer> nextFront = new ArrayList<Integer>();
+			Population solutionsInFront = new Population();
+			
+			for (int i = 0; i < currentFront.size(); i++) {
+				Solution solution = population.get(currentFront.get(i));
+				solution.setAttribute(RANK_ATTRIBUTE, rank);
+				
+				// update the dominated counts as compute next front
+				for (Integer j : dominatesList.get(currentFront.get(i))) {
+					dominatedCounts[j] -= 1;
+					
+					if (dominatedCounts[j] == 0) {
+						nextFront.add(j);
+					}
+				}		
+				solutionsInFront.add(solution);
+			}			
+			updateCrowdingDistance(solutionsInFront);		
+			rank += 1;
+			currentFront = nextFront;
+		///////////////////
+/*		List<Solution> remaining = new ArrayList<Solution>();
 
 		for (Solution solution : population) {
 			remaining.add(solution);
@@ -120,9 +363,19 @@ public class NondominatedSorting {
 			updateCrowdingDistance(front);
 
 			rank++;
-		}
+			//////////////////////////////////////
+			double[] MaxRank = new double [1];
+			MaxRank[0] = (double) rank; 
+			try {
+			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/NondominateSorting.csv", MaxRank);
+			} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+			//////////////////////////////////////
+*/		}
 	}
-
+	
 	/**
 	 * Computes and assigns the {@code crowdingDistance} attribute to solutions.
 	 * The specified population should consist of solutions within the same

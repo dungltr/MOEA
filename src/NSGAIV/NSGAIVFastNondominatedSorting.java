@@ -18,6 +18,7 @@
 package NSGAIV;
 import org.moeaframework.core.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,9 +166,19 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 			}
 			nextFrontCount = nextFrontCount + equivalentCounts[currentFrontInternal.get(0)];
 			rank +=1;
+			
 			currentFront = currentFrontInternal;
-			System.out.println("------Alalalalalalallalalalala-------");
 			AllFront = nextFront;
+			//////////////////////////////////////
+			double[] MaxRank = new double [1];
+			MaxRank[0] = (double) rank; 
+			try {
+				writeMatrix2CSV.addArray2Csv("/Users/letrungdung/maxRank.csv", MaxRank);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//////////////////////////////////////
 		}
 /*		
 		while (!currentFront.isEmpty()) {

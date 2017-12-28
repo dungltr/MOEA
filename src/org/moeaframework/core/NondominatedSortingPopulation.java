@@ -19,6 +19,7 @@ package org.moeaframework.core;
 
 import static org.moeaframework.core.NondominatedSorting.RANK_ATTRIBUTE;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -27,6 +28,8 @@ import org.moeaframework.core.comparator.DominanceComparator;
 import org.moeaframework.core.comparator.NondominatedSortingComparator;
 import org.moeaframework.core.comparator.ParetoDominanceComparator;
 import org.moeaframework.core.comparator.RankComparator;
+
+import NSGAIV.writeMatrix2CSV;
 
 /**
  * Population that maintains the {@code rank} and {@code crowdingDistance}
@@ -70,7 +73,7 @@ public class NondominatedSortingPopulation extends Population {
 	 */
 	public NondominatedSortingPopulation(DominanceComparator comparator) {
 		super();
-		modified = false;
+		modified = false; //old is false
 		
 		if (Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new FastNondominatedSorting(comparator);
@@ -178,6 +181,7 @@ public class NondominatedSortingPopulation extends Population {
 	 */
 	public void truncate(int size) {
 		truncate(size, new NondominatedSortingComparator());
+		System.out.println("-----------------lalalal--------------------------------");
 	}
 	
 	/**
@@ -189,6 +193,7 @@ public class NondominatedSortingPopulation extends Population {
 	 */
 	public void prune(int size) {
 		if (modified) {
+			System.out.println("-----------------lololol--------------------------------");
 			update();
 		}
 
@@ -216,6 +221,17 @@ public class NondominatedSortingPopulation extends Population {
 		while (size() + front.size() > size) {
 			nondominatedSorting.updateCrowdingDistance(front);
 			front.truncate(front.size()-1, new CrowdingComparator());
+			//////////////////////////////////////
+			System.out.println("-----------------lelelel--------------------------------");
+			double[] MaxRank = new double [1];
+			MaxRank[0] = (double) size(); 
+			try {
+			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/NondominateSortingPopulation.csv", MaxRank);
+			} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+			//////////////////////////////////////
 		}
 		
 		addAll(front);
@@ -230,7 +246,7 @@ public class NondominatedSortingPopulation extends Population {
 	 * invoke {@link #update()} manually.
 	 */
 	public void update() {
-		modified = false;
+		modified = false; //old is false
 		nondominatedSorting.evaluate(this);
 	}
 

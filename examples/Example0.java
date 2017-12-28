@@ -24,7 +24,6 @@ import org.moeaframework.problem.AbstractProblem;
 import org.moeaframework.util.Vector;
 import NSGAIV.ReadFile;
 import NSGAIV.writeMatrix2CSV;
-import NSGAIV.CsvFileReader;
 import static NSGAIV.ReadMatrixCSV.readMatrix;
 import static java.lang.Math.pow;
 
@@ -124,16 +123,15 @@ public class Example0 {
         // 2.2.1 Create Excel workbook
         //XSSFWorkbook workBook = new XSSFWorkbook();
         // 2.2.2 Create Excel sheets by different iterations
-        //XSSFSheet sheet1 = workBook.createSheet("Iteration");
-        
-        for (int k = 0; k < 1; k++) {
-            int iteration = (int) pow(100, k + 1);
+        //XSSFSheet sheet1 = workBook.createSheet("Iteration");    
+        for (int k = 0; k < 2; k++) {
+            int iteration = (int) pow(10, k + 1);
             System.out.println("Iteration: " + iteration);
             NondominatedPopulation result = new Executor()
                     .withProblemClass(MO.class)
                     .withAlgorithm("NSGAIV")
                     .withMaxEvaluations(iteration)
-                    .withProperty("populationSize", 100)
+                    .withProperty("populationSize", 10)
                     .run();
             System.out.println("Num of Solutions: "+ result.size());
             double[][] matrixResult = new double [result.size()][result.get(0).getNumberOfObjectives()];

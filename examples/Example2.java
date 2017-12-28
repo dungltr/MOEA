@@ -28,7 +28,7 @@ public class Example2 {
 
 	public static void main(String[] args) throws IOException {
 		String problem = "UF1";
-		String[] algorithms = { "NSGAII", "GDE3", "eMOEA" };
+		String[] algorithms = { "NSGAII","NSGAIV", "GDE3", "eMOEA" };
 
 		//setup the experiment
 		Executor executor = new Executor()

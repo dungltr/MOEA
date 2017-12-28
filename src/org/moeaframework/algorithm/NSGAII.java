@@ -145,6 +145,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm implements
 		}
 
 		population.addAll(offspring);
+		//System.out.println("-----------------lelelel--------------------------------");
 		population.truncate(populationSize);
 	}
 

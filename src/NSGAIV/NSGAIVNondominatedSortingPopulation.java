@@ -16,9 +16,10 @@
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 package NSGAIV;
-
+import NSGAIV.writeMatrix2CSV;
 import static org.moeaframework.core.NondominatedSorting.RANK_ATTRIBUTE;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -192,12 +193,18 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		if (modified) {
 			update();
 		}
-
 		sort(new RankComparator());
-
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
+		double[] MaxRank = new double [1];
+		MaxRank[0] = (double) maxRank; 
+		try {
+			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/maxRank.csv", MaxRank);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Population front = new Population();
 
 		for (int i=size()-1; i>=0; i--) {
@@ -217,6 +224,16 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		while (size() + front.size() > size) {
 			nondominatedSorting.updateCrowdingDistance(front);
 			front.truncate(front.size()-1, new CrowdingComparator());
+			//////////////////////////////////////
+			double[] MaxRank2 = new double [1];
+			MaxRank2[0] = (double) size(); 
+			try {
+			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/NSGAIVNondominateSortingPopulation.csv", MaxRank);
+			} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+			//////////////////////////////////////
 		}
 		
 		addAll(front);

@@ -89,8 +89,8 @@ public class Example1 {
 
 	public static void main(String[] args) {
 		//test1();
-		//test3();
-		test4();
+		test3();
+		//test4();
 		//configure and run this experiment
 		
 	}
@@ -98,7 +98,7 @@ public class Example1 {
 	public static void test1(){
 		NondominatedPopulation result = new Executor()
 				.withProblem("UF1")
-				.withAlgorithm("NSGAII")
+				.withAlgorithm("NSGAIV")
 				.withMaxEvaluations(10000)
 				.run();
 		
@@ -115,7 +115,7 @@ public class Example1 {
         //configure and run this experiment
 		NondominatedPopulation result = new Executor()
 		.withProblem("UF1")
-		.withAlgorithm("RandomWalker")
+		.withAlgorithm("NSGAII")
 		.withMaxEvaluations(10000)
 		.distributeOnAllCores()
 		.run();

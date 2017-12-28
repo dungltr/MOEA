@@ -12,8 +12,6 @@ import org.moeaframework.core.spi.OperatorFactory;
 import org.moeaframework.util.TypedProperties;
 
 
-import org.moeaframework.core.EpsilonBoxDominanceArchive;
-import org.moeaframework.core.FitnessEvaluator;
 import org.moeaframework.core.FrameworkException;
 
 import org.moeaframework.core.NondominatedPopulation;
