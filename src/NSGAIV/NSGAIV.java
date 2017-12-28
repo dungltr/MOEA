@@ -18,6 +18,8 @@
 package NSGAIV;
 import org.moeaframework.algorithm.AbstractAlgorithm;
 import org.moeaframework.algorithm.AbstractEvolutionaryAlgorithm;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,7 +88,7 @@ public class NSGAIV extends AbstractEvolutionaryAlgorithm implements
 	}
 
 	@Override
-	public void iterate() {
+	public void iterate() throws IOException {
 		NSGAIVNondominatedSortingPopulation population = getPopulation();
 		EpsilonBoxDominanceArchive archive = getArchive();
 		Population offspring = new Population();
@@ -103,6 +105,12 @@ public class NSGAIV extends AbstractEvolutionaryAlgorithm implements
 					new CrowdingComparator());
 			
 			while (offspring.size() < populationSize) {
+				System.out.println("the offspring size is: "+offspring.size());
+				System.out.println("the population size is: "+populationSize);
+				double[] Max = new double [2];
+				Max[0] = (double)offspring.size();
+				Max[1] = (double)populationSize;
+				writeMatrix2CSV.addArray2Csv("/Users/letrungdung/populationSize.csv", Max); 
 				// ensure the pool has enough solutions
 				while (pool.size() < 2*variation.getArity()) {
 					List<Solution> poolAdditions = new ArrayList<Solution>();

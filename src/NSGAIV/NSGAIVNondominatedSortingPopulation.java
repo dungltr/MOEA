@@ -16,9 +16,10 @@
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 package NSGAIV;
-
+import NSGAIV.writeMatrix2CSV;
 import static org.moeaframework.core.NondominatedSorting.RANK_ATTRIBUTE;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -187,8 +188,11 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 	 * each time a solution is removed.
 	 * 
 	 * @param size the target population size after pruning
+	 * size = size of Population
+	 * @throws IOException 
 	 */
-	public void prune(int size) {
+	/*This is the function of Filter Front - Dung will edit this function*/
+	public void prune(int size) throws IOException {
 		if (modified) {
 			update();
 		}
@@ -198,11 +202,15 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
+		double[] Max = new double [1];
+		Max[0] = (double)maxRank;
+		writeMatrix2CSV.addArray2Csv("/Users/letrungdung/maxRank.csv", Max);
+		System.out.println("maxRank is: "+maxRank);
 		Population front = new Population();
 
 		for (int i=size()-1; i>=0; i--) {
-			Solution solution = super.get(i);
-			int rank = (Integer)solution.getAttribute(RANK_ATTRIBUTE);
+			Solution solution = super.get(i);// solutions in current rank
+			int rank = (Integer)solution.getAttribute(RANK_ATTRIBUTE); // get rank of current front
 			
 			if (rank >= maxRank) {
 				super.remove(i);

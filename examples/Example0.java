@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
+import org.moeaframework.Analyzer;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.Solution;
@@ -23,8 +24,8 @@ import org.moeaframework.core.variable.RealVariable;
 import org.moeaframework.problem.AbstractProblem;
 import org.moeaframework.util.Vector;
 import NSGAIV.ReadFile;
+import NSGAIV.matrixPrint;
 import NSGAIV.writeMatrix2CSV;
-import NSGAIV.CsvFileReader;
 import static NSGAIV.ReadMatrixCSV.readMatrix;
 import static java.lang.Math.pow;
 
@@ -66,16 +67,18 @@ public class Example0 {
 	    @Override
 	    public void evaluate(Solution solution) {
 	        int[] x = EncodingUtils.getInt(solution);
-	        
+	        System.out.println("\nPrinting array orders x[]--------");
+	        matrixPrint.printArray(x);
 	        double[] f = new double[numberOfObjectives];
 	        double[] g = new double[numberOfConstraints];
 
-	        double[][] b = new double[numberOfObjectives][numberOfVariables];
+	        double[][] b = new double[numberOfObjectives][numberOfVariables];// Objectives = 2; Variables = 1;
 	        for (int i = 0; i < numberOfObjectives; i++){
 	            for (int j = 0; j < numberOfVariables; j++)
-	                b[i][j] = matrixMetrics[x[0]][i+1];
+	                b[i][j] = matrixMetrics[x[0]][i+1];// reading objectives in the order of solution
 	        }
-	      
+	        System.out.println("\nPrinting Matrix objectives b[i][j]");
+	        matrixPrint.printMatrix(b);
 	        //Objectives.
 	        for (int i = 0; i < numberOfObjectives; i++) {
 	            f[i] = 0;
@@ -83,6 +86,8 @@ public class Example0 {
 	                f[i] -= b[i][j];
 	            }
 	        }      
+	        System.out.println("\nPrinting Array f[i]---------------");
+	        matrixPrint.printArray(f);
 	        //Constraints:
 	        //constraints that are satisfied have a value of zero; violated constraints have
 	        //non-zero values (both positive and negative).
@@ -97,7 +102,10 @@ public class Example0 {
 	            }   else {
 	                g[i] = sum - Max;
 	                }
-	        }        
+	        }     
+	        System.out.println("\nPrinting Array g[i]---------------");
+	        matrixPrint.printArray(g);
+	        System.out.println("----------------------------------");
 	        //Negate the objectives since Knapsack is maximization.
 	        solution.setObjectives(Vector.negate(f));
 	        //solution.setObjectives(Vector.normalize(f));
@@ -125,16 +133,29 @@ public class Example0 {
         //XSSFWorkbook workBook = new XSSFWorkbook();
         // 2.2.2 Create Excel sheets by different iterations
         //XSSFSheet sheet1 = workBook.createSheet("Iteration");
+        test01();
+        //test02();
         
-        for (int k = 0; k < 1; k++) {
-            int iteration = (int) pow(100, k + 1);
+    }
+	public static void test01() throws IOException {
+		for (int k = 0; k < 2; k++) {
+            int iteration = (int) pow(10, k + 1);
             System.out.println("Iteration: " + iteration);
             NondominatedPopulation result = new Executor()
-                    .withProblemClass(MO.class)
+                    //.withProblem("UF1")
+            			.withProblemClass(MO.class)
                     .withAlgorithm("NSGAIV")
                     .withMaxEvaluations(iteration)
                     .withProperty("populationSize", 100)
                     .run();
+            System.out.format("Objective1  Objective2%n");
+/////////////////////////////////////////////////////////
+    		for (Solution solution : result) {
+    			System.out.format("%.4f      %.4f%n",
+    			solution.getObjective(0),
+    			solution.getObjective(1));
+    		}
+ ////////////////////////////////////////////////////////   		
             System.out.println("Num of Solutions: "+ result.size());
             double[][] matrixResult = new double [result.size()][result.get(0).getNumberOfObjectives()];
             // 2.2.4 Read solutions
@@ -172,6 +193,29 @@ public class Example0 {
         writeMatrix2CSV.addMatrix2Csv(ReadFile.readhome("MOEA_Framework") + "/pf/problem" +"_result.csv", matrixResult);
         System.out.println("-----------------------------------------");    
         }
-    }
+	}
+	public static void test02() {
+		String problem = "UF1";
+		String[] algorithms = { "NSGAII", "NSGAIV", "GDE3", "eMOEA" };
+
+		//setup the experiment
+		Executor executor = new Executor()
+				.withProblem(problem)
+				.withMaxEvaluations(10000);
+
+		Analyzer analyzer = new Analyzer()
+				.withProblem(problem)
+				.includeHypervolume()
+				.showStatisticalSignificance();
+
+		//run each algorithm for 50 seeds
+		for (String algorithm : algorithms) {
+			analyzer.addAll(algorithm, 
+					executor.withAlgorithm(algorithm).runSeeds(50));
+		}
+
+		//print the results
+		analyzer.printAnalysis();
+	}
 }
 

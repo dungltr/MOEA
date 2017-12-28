@@ -17,6 +17,7 @@
  */
 package org.moeaframework.core;
 
+import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.Serializable;
 
@@ -52,8 +53,9 @@ public interface Algorithm {
 	 * <p>
 	 * This method should not be invoked when {@link #isTerminated()} returns
 	 * {@code true}.
+	 * @throws IOException 
 	 */
-	public void step();
+	public void step() throws IOException;
 
 	/**
 	 * Evaluates the specified solution for the problem being solved by this

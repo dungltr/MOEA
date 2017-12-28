@@ -17,6 +17,7 @@
  */
 package org.moeaframework.algorithm;
 
+import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -146,12 +147,13 @@ public abstract class AbstractAlgorithm implements Algorithm {
 	 * {@code step} invoke {@link #iterate()}. Implementations should override
 	 * the {@code initialize} and {@code iterate} methods in preference to
 	 * modifying this method.
+	 * @throws IOException 
 	 * 
 	 * @throws AlgorithmTerminationException if the algorithm has already 
 	 *         terminated
 	 */
 	@Override
-	public void step() {
+	public void step() throws IOException {
 		if (isTerminated()) {
 			throw new AlgorithmTerminationException(this, 
 					"algorithm already terminated");
@@ -166,8 +168,9 @@ public abstract class AbstractAlgorithm implements Algorithm {
 	 * Performs one iteration of the algorithm. This method should be
 	 * overridden by implementations to perform each logical iteration of the
 	 * algorithm.
+	 * @throws IOException 
 	 */
-	protected abstract void iterate();
+	protected abstract void iterate() throws IOException;
 
 	@Override
 	public boolean isTerminated() {

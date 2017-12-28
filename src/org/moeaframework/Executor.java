@@ -737,8 +737,9 @@ public class Executor extends ProblemBuilder {
 	 * Runs this executor with its configured settings.
 	 * 
 	 * @return the end-of-run approximation set; or {@code null} if canceled
+	 * @throws IOException 
 	 */
-	public NondominatedPopulation run() {
+	public NondominatedPopulation run() throws IOException {
 		isCanceled.set(false);
 		return runSingleSeed(1, 1, createTerminationCondition());
 	}
@@ -752,6 +753,7 @@ public class Executor extends ProblemBuilder {
 	 * @param terminationCondition the termination conditions for the run
 	 * 
 	 * @return the end-of-run approximation set; or {@code null} if canceled
+	 * @throws IOException 
 	 */
 	protected NondominatedPopulation runSingleSeed(int seed, int numberOfSeeds,
 			TerminationCondition terminationCondition) {

@@ -86,26 +86,38 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 		// and the number of times it is dominated
 		int[] dominatedCounts = new int[N];
 		int[] dominatesCounts = new int[N];
+		int[] equivalentCounts = new int[N];
 		List<List<Integer>> dominatesList = new ArrayList<List<Integer>>();
 		List<List<Integer>> dominatedList = new ArrayList<List<Integer>>();
+		List<List<Integer>> equivalentList = new ArrayList<List<Integer>>();
 		List<Integer> currentFront = new ArrayList<Integer>();
 		
+		List<Integer> AllFront = new ArrayList<Integer>();
+		for (int i = 0; i < N; i++)
+			AllFront.add(i);
 		
 		for (int i = 0; i < N; i++) {
 			List<Integer> dominates = new ArrayList<Integer>();
 			List<Integer> dominated = new ArrayList<Integer>();
+			List<Integer> equivalent = new ArrayList<Integer>();
 			int dominatedCount = 0;
 			int dominatesCount = 0;
+			int equivalentCount = 0;
 			
 			for (int j = 0; j < N; j++) {
 				if (i != j) {
 					if (dominanceChecks[i][j] < 0) {
 						dominatesCount +=1;
 						dominates.add(j);
-					} else if (dominanceChecks[j][i] < 0) {
-						dominatedCount += 1;
-						dominated.add(j);
-					}
+					} else 
+						if (dominanceChecks[j][i] < 0) {
+							dominatedCount += 1;
+							dominated.add(j);
+						}
+						else {
+							equivalentCount +=1;
+							equivalent.add(j);
+						}
 				}
 			}
 			
@@ -118,11 +130,46 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 			
 			dominatedList.add(dominated);
 			dominatesCounts[i] = dominatesCount;
+			
+			equivalentList.add(equivalent);
+			equivalentCounts[i] = equivalentCount;
 		}
 		
 		// assign ranks
 		int rank = 0;
-		
+		for (int i=0; i< currentFront.size(); i++) {
+			
+			AllFront.remove(currentFront.get(i));
+		}		
+		int nextFrontCount = equivalentCounts[currentFront.get(0)];
+		while (!AllFront.isEmpty()) {
+			
+			List<Integer> nextFront = new ArrayList<Integer>();
+			List<Integer> currentFrontInternal = new ArrayList<Integer>();
+			Population solutionsInFront = new Population();
+			
+			for (int i = 0; i < currentFront.size(); i++) {
+				Solution solution = population.get(currentFront.get(i));
+				solution.setAttribute(RANK_ATTRIBUTE, rank);
+				solutionsInFront.add(solution);
+			}
+			updateCrowdingDistance(solutionsInFront);			
+			for (int i = 0; i < AllFront.size(); i++) {
+				if (nextFrontCount == dominatedCounts[AllFront.get(i)]) {
+					currentFrontInternal.add(AllFront.get(i));
+					//AllFront.remove(All.get(i));
+				}
+				else {
+					nextFront.add(AllFront.get(i));
+				}
+			}
+			nextFrontCount = nextFrontCount + equivalentCounts[currentFrontInternal.get(0)];
+			rank +=1;
+			currentFront = currentFrontInternal;
+			System.out.println("------Alalalalalalallalalalala-------");
+			AllFront = nextFront;
+		}
+/*		
 		while (!currentFront.isEmpty()) {
 			List<Integer> nextFront = new ArrayList<Integer>();
 			Population solutionsInFront = new Population();
@@ -148,6 +195,6 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 			rank += 1;
 			currentFront = nextFront;
 		}
-	}
+*/	}
 
 }
