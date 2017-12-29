@@ -168,7 +168,7 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		if (modified) {
 			update();
 		}
-
+		System.out.println("From NSGAIVNondominatedSorting.truncate.2");
 		super.truncate(size, comparator);
 	}
 
@@ -180,6 +180,7 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 	 */
 	public void truncate(int size) {
 		truncate(size, new NondominatedSortingComparator());
+		System.out.println("From NSGAIVNondoinatedSortingPopulation.truncate");
 	}
 	
 	/**
@@ -194,6 +195,7 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 			update();
 		}
 		sort(new RankComparator());
+		System.out.println("From NSGAIVNondoinatedSortingPopulation.prune");
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
