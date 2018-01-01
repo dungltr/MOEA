@@ -128,7 +128,7 @@ public class Population implements Iterable<Solution> {
 		for (Solution solution : iterable) {
 			changed |= add(solution);
 		}
-		System.out.println("-------------From org.moeaframework.core.population");
+		System.out.println("function addAll-------------From org.moeaframework.core.population");
 		return changed;
 	}
 
@@ -293,7 +293,7 @@ public class Population implements Iterable<Solution> {
 	 */
 	public void truncate(int size, Comparator<? super Solution> comparator) {
 		sort(comparator);
-		System.out.println("--------From org.moeaframework.population.truncate------");
+		System.out.println("function truncate--------From org.moeaframework.population.truncate------");
 		while (data.size() > size) {
 			data.remove(data.size() - 1);
 		}

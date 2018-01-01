@@ -39,7 +39,7 @@ import org.moeaframework.problem.DTLZ.DTLZ4;
 import org.moeaframework.util.TypedProperties;
 
 /**
- * Tests the {@link NSGAIII} class.
+ * Tests the {@link NSGAV} class.
  */
 public class NSGAIIITest {
 	

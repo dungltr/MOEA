@@ -357,6 +357,7 @@ public class Settings {
 	 *         implementation is preferred
 	 */
 	public static boolean useFastNondominatedSorting() {
+		//System.out.println(KEY_FAST_NONDOMINATED_SORTING + " using function useFastNondominatedSorting():"+false);
 		return PROPERTIES.getBoolean(KEY_FAST_NONDOMINATED_SORTING, false);
 	}
 	

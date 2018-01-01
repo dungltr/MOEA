@@ -3,3 +3,4 @@ org.moeaframework.algorithm.jmetal.JMetalAlgorithms
 org.moeaframework.algorithm.pisa.PISAAlgorithms
 randomwalker.RandomWalkerProvider
 NSGAIV.NSGAIVProvider
+NSGAV.NSGAVProvider

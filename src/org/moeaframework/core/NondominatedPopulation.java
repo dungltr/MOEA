@@ -231,7 +231,7 @@ public class NondominatedPopulation extends Population {
 	 * @param s2 the second solution
 	 * @return the distance between the two solutions in objective space
 	 */
-	protected static double distance(Solution s1, Solution s2) {
+	public static double distance(Solution s1, Solution s2) { //Dung edit original is protected
 		double distance = 0.0;
 
 		for (int i = 0; i < s1.getNumberOfObjectives(); i++) {

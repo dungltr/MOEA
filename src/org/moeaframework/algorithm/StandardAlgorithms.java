@@ -420,7 +420,7 @@ public class StandardAlgorithms extends AlgorithmProvider {
 	}
 	
 	/**
-	 * Returns a new {@link NSGAIII} instance.
+	 * Returns a new {@link NSGAV} instance.
 	 * 
 	 * @param properties the properties for customizing the new {@code NSGAIII}
 	 *        instance

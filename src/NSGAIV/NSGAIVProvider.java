@@ -42,7 +42,8 @@ public class NSGAIVProvider extends AlgorithmProvider {
 			
 			// allow the user to customize the population size (default to 100)
 			int populationSize = typedProperties.getInt("populationSize", 100);
-			
+			System.out.println("Hello from NSGAIV provider");
+			typedProperties.setBoolean("org.moeaframework.core.fast_nondominated_sorting",true);
 			// initialize the algorithm with randomly-generated solutions
 			Initialization initialization = new RandomInitialization(problem, populationSize);
 			

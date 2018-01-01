@@ -77,8 +77,10 @@ public class NondominatedSortingPopulation extends Population {
 		
 		if (Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new FastNondominatedSorting(comparator);
+			System.out.println("Using FastNondominatedSorting");
 		} else {
 			nondominatedSorting = new NondominatedSorting(comparator);
+			System.out.println("Using Original NondominatedSorting");
 		}
 	}
 

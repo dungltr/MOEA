@@ -147,6 +147,7 @@ public class NSGAIV extends AbstractEvolutionaryAlgorithm implements
 
 		population1.addAll(offspring);
 		//population1.truncate(populationSize);
+		System.out.println("After addAll");
 		population1.prune(populationSize);
 		System.out.println("-----------------finish truncate in NSGAIV.java--------------------------------");
 	}

@@ -124,14 +124,15 @@ public class Example0 {
         //XSSFWorkbook workBook = new XSSFWorkbook();
         // 2.2.2 Create Excel sheets by different iterations
         //XSSFSheet sheet1 = workBook.createSheet("Iteration");    
-        for (int k = 0; k < 2; k++) {
+        for (int k = 0; k < 1; k++) {
             int iteration = (int) pow(10, k + 1);
             System.out.println("Iteration: " + iteration);
             NondominatedPopulation result = new Executor()
                     .withProblemClass(MO.class)
-                    .withAlgorithm("NSGAIV")
+                    .withAlgorithm("NSGAV")
                     .withMaxEvaluations(iteration)
                     .withProperty("populationSize", 10)
+                    //.withProperty("org.moeaframework.core.fast_nondominated_sorting",false)
                     .run();
             System.out.println("Num of Solutions: "+ result.size());
             double[][] matrixResult = new double [result.size()][result.get(0).getNumberOfObjectives()];

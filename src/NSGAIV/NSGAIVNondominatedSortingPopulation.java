@@ -74,10 +74,12 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		super();
 		modified = false;
 		
-		if (Settings.useFastNondominatedSorting()) {
+		if (!Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new NSGAIVFastNondominatedSorting(comparator);
+			System.out.println("Using FastNondominatedSorting");
 		} else {
-			nondominatedSorting = new NondominatedSorting(comparator);
+			nondominatedSorting = new NSGAIVNondominatedSorting(comparator);
+			System.out.println("Using OriginNondominatedSorting");
 		}
 	}
 
@@ -199,20 +201,13 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
-		double[] MaxRank = new double [1];
-		MaxRank[0] = (double) maxRank; 
-		try {
-			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/maxRank.csv", MaxRank);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//System.out.println("MaxRank NSGAIVNondoinatedSortingPopulation.prune:=" + maxRank);
 		Population front = new Population();
 
 		for (int i=size()-1; i>=0; i--) {
 			Solution solution = super.get(i);
 			int rank = (Integer)solution.getAttribute(RANK_ATTRIBUTE);
-			
+			//System.out.println("Rank NSGAIVNondoinatedSortingPopulation.prune:=" + rank);
 			if (rank >= maxRank) {
 				super.remove(i);
 			
@@ -221,21 +216,13 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 				}
 			}
 		}
-		
+		//System.out.println("Front Size NSGAIVNondoinatedSortingPopulation.prune:=" + front.size());
 		//prune front until correct size
 		while (size() + front.size() > size) {
 			nondominatedSorting.updateCrowdingDistance(front);
+			System.out.println("Before truncate");
 			front.truncate(front.size()-1, new CrowdingComparator());
-			//////////////////////////////////////
-			double[] MaxRank2 = new double [1];
-			MaxRank2[0] = (double) size(); 
-			try {
-			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/NSGAIVNondominateSortingPopulation.csv", MaxRank);
-			} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			}
-			//////////////////////////////////////
+			
 		}
 		
 		addAll(front);
