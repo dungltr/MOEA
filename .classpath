@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="examples"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/moeaframework/core/fitness/" kind="src" path="test"/>
+	<classpathentry kind="src" path="test/org/moeaframework/core/fitness"/>
+	<classpathentry kind="src" path="lib/NSGAIV"/>
+	<classpathentry kind="lib" path="auxiliary/checkstyle/checkstyle-5.6-all.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math3-3.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.20.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.15.jar"/>
+	<classpathentry kind="lib" path="lib/JMetal-4.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/NSGAIV.jar"/>
+	<classpathentry kind="lib" path="lib/RandomWalker.jar"/>
+	<classpathentry kind="lib" path="lib/rsyntaxtextarea.jar"/>
+	<classpathentry kind="lib" path="lib/NSGAV.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
