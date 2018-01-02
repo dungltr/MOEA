@@ -1,7 +1,7 @@
 package NSGAV;
 
 import java.util.Properties;
-
+import NSGAV.NSGAVNondominatedSortingPopulation;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.moeaframework.algorithm.NSGAII;
 import org.moeaframework.algorithm.ReferencePointNondominatedSortingPopulation;
@@ -61,8 +61,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 			return null;
 		}
 	}
-*/	public Algorithm getAlgorithm(String name, Properties properties,
-			Problem problem) {
+*/	public Algorithm getAlgorithm(String name, Properties properties, Problem problem) {
 		TypedProperties typedProperties = new TypedProperties(properties);
 
 		try {
@@ -130,7 +129,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		}
 		
 		Initialization initialization = new RandomInitialization(problem,
-				populationSize);
+				populationSize);// Create initialization
 		
 		//NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
 		//		problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
@@ -164,13 +163,13 @@ public class NSGAVProvider extends AlgorithmProvider {
 		}
 		*/
 		/////////////////////NSGAVReferencePointNondominatedSortingPopulation
-		NSGAIVNondominatedSortingPopulation population = 
-				new NSGAIVNondominatedSortingPopulation();
+		NSGAVNondominatedSortingPopulation population = 
+				new NSGAVNondominatedSortingPopulation();// Create population
 		TournamentSelection selection = null;		
 		if (properties.getBoolean("withReplacement", true)) {
 			selection = new TournamentSelection(2, new ChainedComparator(
 					new ParetoDominanceComparator(),
-					new CrowdingComparator()));
+					new CrowdingComparator()));//Create selection
 		}
 		////////////////////
 		// disable swapping variables in SBX operator to remain consistent with
@@ -189,7 +188,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		}
 
 		Variation variation = OperatorFactory.getInstance().getVariation(null, 
-				properties, problem);
+				properties, problem);// Create variation
 
 		return new NSGAV(problem, population, null, selection, variation,
 				initialization);
