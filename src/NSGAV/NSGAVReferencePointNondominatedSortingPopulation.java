@@ -113,7 +113,6 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		this.numberOfObjectives = numberOfObjectives;
 		this.divisionsOuter = divisions;
 		this.divisionsInner = 0;
-
 		initialize();
 	}
 

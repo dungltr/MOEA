@@ -124,7 +124,7 @@ public class Example0 {
         //XSSFWorkbook workBook = new XSSFWorkbook();
         // 2.2.2 Create Excel sheets by different iterations
         //XSSFSheet sheet1 = workBook.createSheet("Iteration");    
-        for (int k = 0; k < 1; k++) {
+        for (int k = 0; k < 2; k++) {
             int iteration = (int) pow(10, k + 1);
             System.out.println("Iteration: " + iteration);
             NondominatedPopulation result = new Executor()
@@ -144,10 +144,7 @@ public class Example0 {
 
                 //Negate objectives to return them to their maximized form.
                 objectives = Vector.negate(objectives);//.negate(objectives);
-
-                //2.2.5 Print results
-
-                
+                //2.2.5 Print results       
                 System.out.println("\n    Solution " + (m + 1) + ":");
                 for (int i=0; i < objectives.length; i++)
                     System.out.print("      Obj "+i+": " + -objectives[i]);

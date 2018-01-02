@@ -15,6 +15,7 @@ import org.moeaframework.core.spi.OperatorFactory;
 import org.moeaframework.core.spi.ProviderNotFoundException;
 import org.moeaframework.util.TypedProperties;
 
+import NSGAIV.NSGAIVNondominatedSortingPopulation;
 
 import org.moeaframework.core.FrameworkException;
 
@@ -131,12 +132,10 @@ public class NSGAVProvider extends AlgorithmProvider {
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);
 		
-		NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
-				problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
-
-		Selection selection = null;
-		
-		if (problem.getNumberOfConstraints() == 0) {
+		//NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
+		//		problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
+		//Selection selection = null;
+		/*if (problem.getNumberOfConstraints() == 0) {
 			selection = new Selection() {
 	
 				@Override
@@ -163,7 +162,17 @@ public class NSGAVProvider extends AlgorithmProvider {
 						
 					}));
 		}
-		
+		*/
+		/////////////////////NSGAVReferencePointNondominatedSortingPopulation
+		NSGAIVNondominatedSortingPopulation population = 
+				new NSGAIVNondominatedSortingPopulation();
+		TournamentSelection selection = null;		
+		if (properties.getBoolean("withReplacement", true)) {
+			selection = new TournamentSelection(2, new ChainedComparator(
+					new ParetoDominanceComparator(),
+					new CrowdingComparator()));
+		}
+		////////////////////
 		// disable swapping variables in SBX operator to remain consistent with
 		// Deb's implementation (thanks to Haitham Seada for identifying this
 		// discrepancy)
@@ -182,7 +191,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		Variation variation = OperatorFactory.getInstance().getVariation(null, 
 				properties, problem);
 
-		return new NSGAII(problem, population, null, selection, variation,
+		return new NSGAV(problem, population, null, selection, variation,
 				initialization);
 	}
 /*	private Algorithm newNSGAV(TypedProperties properties, Problem problem) {
