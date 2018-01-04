@@ -88,6 +88,7 @@ public class NSGAV extends AbstractEvolutionaryAlgorithm implements
 
 	@Override
 	public void iterate() {
+		System.out.println("----------iterate from NSGAV.java------------------------------------------");
 		NSGAVNondominatedSortingPopulation population = getPopulation();
 		EpsilonBoxDominanceArchive archive = getArchive();
 		Population offspring = new Population();

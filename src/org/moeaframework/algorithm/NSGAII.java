@@ -86,6 +86,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm implements
 
 	@Override
 	public void iterate() {
+		System.out.println("Say hello from NSGAII");
 		NondominatedSortingPopulation population = getPopulation();
 		EpsilonBoxDominanceArchive archive = getArchive();
 		Population offspring = new Population();
@@ -145,7 +146,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm implements
 		}
 
 		population.addAll(offspring);
-		//System.out.println("-----------------lelelel--------------------------------");
+		System.out.println("After addAll offspring----------truncate poppulationSize----------------------");
 		population.truncate(populationSize);
 	}
 

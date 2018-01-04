@@ -15,7 +15,7 @@ import org.moeaframework.core.spi.OperatorFactory;
 import org.moeaframework.core.spi.ProviderNotFoundException;
 import org.moeaframework.util.TypedProperties;
 
-import NSGAIV.NSGAIVNondominatedSortingPopulation;
+//import NSGAIV.NSGAIVNondominatedSortingPopulation;
 
 import org.moeaframework.core.FrameworkException;
 
@@ -131,10 +131,10 @@ public class NSGAVProvider extends AlgorithmProvider {
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);// Create initialization
 		
-		//NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
-		//		problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
-		//Selection selection = null;
-		/*if (problem.getNumberOfConstraints() == 0) {
+		NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
+				problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
+		Selection selection = null;
+		if (problem.getNumberOfConstraints() == 0) {
 			selection = new Selection() {
 	
 				@Override
@@ -161,9 +161,9 @@ public class NSGAVProvider extends AlgorithmProvider {
 						
 					}));
 		}
-		*/
+		
 		/////////////////////NSGAVReferencePointNondominatedSortingPopulation
-		NSGAVNondominatedSortingPopulation population = 
+		/*NSGAVNondominatedSortingPopulation population = 
 				new NSGAVNondominatedSortingPopulation();// Create population
 		TournamentSelection selection = null;		
 		if (properties.getBoolean("withReplacement", true)) {
@@ -171,6 +171,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 					new ParetoDominanceComparator(),
 					new CrowdingComparator()));//Create selection
 		}
+		 */
 		////////////////////
 		// disable swapping variables in SBX operator to remain consistent with
 		// Deb's implementation (thanks to Haitham Seada for identifying this
@@ -190,7 +191,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		Variation variation = OperatorFactory.getInstance().getVariation(null, 
 				properties, problem);// Create variation
 
-		return new NSGAV(problem, population, null, selection, variation,
+		return new NSGAII(problem, population, null, selection, variation,
 				initialization);
 	}
 /*	private Algorithm newNSGAV(TypedProperties properties, Problem problem) {

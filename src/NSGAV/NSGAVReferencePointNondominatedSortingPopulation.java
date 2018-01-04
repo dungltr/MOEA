@@ -261,13 +261,18 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	private void initialize() {
 		idealPoint = new double[numberOfObjectives];
 		Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
-		System.out.println("Say hello from initialize() in NSGAV");
+		//System.out.println("Say hello from initialize() in NSGAV");
 		weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
 				divisionsOuter, divisionsInner).generate();
+		
+		//for (int j=0;j<weights.size();j++)
+		//System.out.println(weights.get(j));
+		//NSGAIV.matrixPrint.printArray(weights.);
 	}
 
 	/**
 	 * Updates the ideal point given the solutions currently in this population.
+	 * Determine new coordinates 
 	 */
 	protected void updateIdealPoint() {
 		for (Solution solution : this) {
@@ -278,6 +283,10 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			for (int i = 0; i < numberOfObjectives; i++) {
 				idealPoint[i] = Math.min(idealPoint[i], solution.getObjective(i));
 			}
+			/*
+			System.out.println("\nidealPoint:=");
+			NSGAIV.matrixPrint.printArray(idealPoint);
+			*/
 		}
 	}
 
@@ -285,6 +294,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 * Offsets the solutions in this population by the ideal point.  This
 	 * method does not modify the objective values, it creates a new attribute
 	 * with the name {@value NORMALIZED_OBJECTIVES}.
+	 * Convert any point to new points with new coordinates
 	 */
 	protected void translateByIdealPoint() {
 		for (Solution solution : this) {
@@ -304,6 +314,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 * it modifies the {@value NORMALIZED_OBJECTIVES} attribute.
 	 * 
 	 * @param intercepts the intercepts used for scaling
+	 * Translate to new coordinates with scaling
 	 */
 	protected void normalizeByIntercepts(double[] intercepts) {
 		for (Solution solution : this) {
@@ -321,6 +332,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 * @param solution the normalized solution
 	 * @param weights the reference point (weight vector)
 	 * @return the value of the scalarizing function
+	 * Finding maximum of scalarizing values
 	 */
 	protected static double achievementScalarizingFunction(Solution solution, double[] weights) {
 		double max = Double.NEGATIVE_INFINITY;
@@ -364,13 +376,20 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		for (int i = 0; i < size(); i++) {
 			Solution solution = get(i);
 			double solutionASF = achievementScalarizingFunction(solution, weights);
-
+			/*
+			System.out.println("The solutionASF is:="+solutionASF);
+			System.out.println("The resultASF is:="+resultASF);
+			*/
 			if (solutionASF < resultASF) {
 				result = solution;
 				resultASF = solutionASF;
 			}
 		}
-
+		/*
+		System.out.println("\nThis is the weights array");
+		NSGAIV.matrixPrint.printArray(weights);
+		System.out.println("\nEnd of the weights array");
+		*/
 		return result;
 	}
 
@@ -544,6 +563,11 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 
 		for (Solution solution : population) {
 			double[] objectives = (double[])solution.getAttribute(NORMALIZED_OBJECTIVES);
+			/*
+			System.out.println("\nThis is the objectives array");
+			NSGAIV.matrixPrint.printArray(objectives);
+			System.out.println("\nEnd of the objectives array");
+			*/
 			double minDistance = Double.POSITIVE_INFINITY;
 			int minIndex = -1;
 
@@ -571,7 +595,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 * @return the solution nearest to the reference point
 	 */
 	protected Solution findSolutionWithMinimumDistance(List<Solution> solutions, double[] weight) {
-		System.out.println("Say hello from findSolutionWithMinimumDistance in NSGAV Reference point");
+		//System.out.println("Say hello from findSolutionWithMinimumDistance in NSGAV Reference point");
 		double minDistance = Double.POSITIVE_INFINITY;
 		Solution minSolution = null;
 
@@ -587,7 +611,16 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 
 		return minSolution;
 	}
-
+	protected  Solution average(List<Solution> solutions){
+		Solution average = null;
+		for (int j=0; j < numberOfObjectives; j++){
+			for (int i = 0; i < solutions.size(); i++) {
+				double[] objectives = (double[])solutions.get(i).getObjectives();
+			
+				}
+		}
+		return average;
+	}
 	/**
 	 * Truncates the population to the specified size using the reference-point
 	 * based nondominated sorting method.
@@ -600,12 +633,18 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 
 			int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
 			Population front = new Population();
-
+			Population previousFront = new Population();// Dung edit
+			Population currentFront = new Population();// Dung edit
+			
 			for (int i = 0; i < size(); i++) {
 				int rank = (Integer)get(i).getAttribute(RANK_ATTRIBUTE);
 				
 				if (rank > maxRank) {
 					front.add(get(i));
+				}
+				else {
+						if (rank==maxRank) currentFront.add(get(i));
+						if (rank==maxRank-1) previousFront.add(get(i));
 				}
 			}
 
