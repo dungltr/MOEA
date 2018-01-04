@@ -128,7 +128,7 @@ public class Population implements Iterable<Solution> {
 		for (Solution solution : iterable) {
 			changed |= add(solution);
 		}
-		System.out.println("function addAll-------------From org.moeaframework.core.population");
+		//System.out.println("function addAll-------------From org.moeaframework.core.population");
 		return changed;
 	}
 

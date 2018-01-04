@@ -32,6 +32,7 @@ import org.moeaframework.core.PRNG;
 import org.moeaframework.core.Population;
 import org.moeaframework.core.Settings;
 import org.moeaframework.core.Solution;
+import org.moeaframework.core.*;
 import org.moeaframework.core.comparator.DominanceComparator;
 import org.moeaframework.core.comparator.RankComparator;
 import org.moeaframework.util.Vector;
@@ -94,11 +95,23 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 * The ideal point, updated each iteration.
 	 */
 	double[] idealPoint;
+	static double[] averagePreviousPoint;
+	static double[] averageCurrentPoint;
 
 	/**
 	 * The list of reference points, or weights.
 	 */
 	private List<double[]> weights;
+
+	private Solution average;
+
+	private static DominanceComparator comparator;
+
+	private static DominanceComparator comparator2;
+
+	private static Population resultFilter;
+
+	private static DominanceComparator comparator3;
 
 	/**
 	 * Constructs an empty population that maintains the {@code rank}
@@ -611,15 +624,103 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 
 		return minSolution;
 	}
+	public static double[] average (List<Solution> solutions,int numberOfObjectives) {
+		double [] averagePoint = new double[numberOfObjectives];
+		for (Solution solution : solutions) {
+			for (int i = 0; i < numberOfObjectives; i++) {
+				averagePoint[i] = averagePoint[i] + solution.getObjective(i)/solutions.size();
+			}
+		}
+		NSGAIV.matrixPrint.printArray(averagePoint);
+		return averagePoint;
+	}
+/*	
 	protected  Solution average(List<Solution> solutions){
 		Solution average = null;
+		
+		double[] objectives = new double[numberOfObjectives];
 		for (int j=0; j < numberOfObjectives; j++){
+			objectives[j] = 0;
 			for (int i = 0; i < solutions.size(); i++) {
-				double[] objectives = (double[])solutions.get(i).getObjectives();
-			
+				objectives[j] = objectives[j] + solutions.get(i).getObjective(j)/solutions.size();			
 				}
+//			average.setObjective(j, 1);//objectives[j]);
 		}
+		average.setObjectives(objectives);
+		NSGAIV.utilsPopulation.printSolution(average);
 		return average;
+	}
+*/	
+	public static List<Solution> getAllSolution(Population population){
+		List<Solution> result = new ArrayList<Solution>();
+		for (int i=0; i< population.size()-1; i++) {
+			result.add(population.get(i));
+		}
+		//.add(i, population.get(i));
+		return result;
+	}
+	public static Population filter (Population previousFront, Population currentFront, int newSize, int numberOfObjectives,Comparator<? super Solution> comparator) {
+		Population resultFilter = new Population();
+		System.out.println("The average CurrentPoint");
+		List<Solution> solutionsCurrentFront = getAllSolution(currentFront);		
+		List<Solution> solutionsPreviousFront = getAllSolution(previousFront);
+		System.out.println("The average PreviousPoint");
+		averagePreviousPoint = average(solutionsPreviousFront,numberOfObjectives);
+		averageCurrentPoint = average(solutionsCurrentFront,numberOfObjectives);
+		double[] delta = new double [numberOfObjectives];
+		for (int i=0; i< delta.length;i++)
+			delta[i] = averageCurrentPoint[i] - averagePreviousPoint[i];
+		//int N = previousFront.size()+currentFront.size();
+		int k=0;
+		int S=0;
+		while (S<newSize) {
+			k++;
+			Population temp = previousFront;
+			for (int i = 0; i<temp.size();i++)
+				for (int j=0; j<numberOfObjectives;j++){
+					temp.get(i).setObjective(j,previousFront.get(i).getObjective(j)+k*delta[j]);
+				}
+			NSGAIV.utilsPopulation.printPopulation(temp);
+			//for (Solution solution : currentFront)
+			//temp.add(solution);
+			// precompute the dominance relations
+			int[][] dominanceChecks = new int[previousFront.size()][currentFront.size()];
+			
+			for (int i = 0; i < currentFront.size(); i++) {
+				Solution si = currentFront.get(i);				
+				for (int j = i+1; j < previousFront.size(); j++) {
+						Solution sj = temp.get(j);						
+						//NSGAVObjectiveComparator Comparator = null;
+						dominanceChecks[i][j] = comparator.compare(si, sj);
+						dominanceChecks[j][i] = -dominanceChecks[i][j];
+				}
+			}
+			/////////
+			//int[] dominatedCounts = new int[previousFront.size()];
+			//List<List<Integer>> dominatesList = new ArrayList<List<Integer>>();
+			//List<Integer> Front = new ArrayList<Integer>();			
+			for (int i = 0; i < currentFront.size(); i++) {
+				List<Integer> dominates = new ArrayList<Integer>();
+				int dominatedCount = 0;			
+				for (int j = 0; j < previousFront.size(); j++) {
+						if (dominanceChecks[i][j] < 0) {
+							dominates.add(j);
+						} else if (dominanceChecks[j][i] < 0) {
+							dominatedCount += 1;
+						}
+				}
+				
+				if (dominatedCount == 0) {
+					//Front.add(i);
+					Solution solution = currentFront.get(i);
+					resultFilter.add(solution);
+				}				
+				//dominatesList.add(dominates);
+				//dominatedCounts[i] = dominatedCount;
+			}
+			S = resultFilter.size();
+		}
+		return resultFilter;
 	}
 	/**
 	 * Truncates the population to the specified size using the reference-point
@@ -647,7 +748,12 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 						if (rank==maxRank-1) previousFront.add(get(i));
 				}
 			}
-
+			/*
+			System.out.println("Here is the previous Front");
+			NSGAIV.utilsPopulation.printPopulation(previousFront);
+			System.out.println("Here is the current Front");
+			NSGAIV.utilsPopulation.printPopulation(currentFront);
+			*/
 			removeAll(front);
 			
 			// update the ideal point
@@ -672,7 +778,10 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			}
 
 			removeAll(front);
-
+			int N = size - size();// size = 100; size() is the members of previous front
+			System.out.println("The solution more is:="+size+"-"+size()+"="+N);
+			Population resultFilter = filter(previousFront, currentFront,N,numberOfObjectives,comparator);
+			System.out.println("The result more is:="+resultFilter.size());
 			// associate each solution to a reference point
 			List<List<Solution>> members = associateToReferencePoint(this);
 			List<List<Solution>> potentialMembers = associateToReferencePoint(front);
@@ -728,6 +837,12 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	@Override
 	public void truncate(int size) {
 		truncate(size, new RankComparator());
+	}
+	public int compare(Solution solution1, Solution solution2) {
+		double value1 = solution1.getObjective(objective);
+		double value2 = solution2.getObjective(objective);
+
+		return Double.compare(value1, value2);
 	}
 	
 }

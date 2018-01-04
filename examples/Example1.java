@@ -115,7 +115,7 @@ public class Example1 {
         //configure and run this experiment
 		NondominatedPopulation result = new Executor()
 		.withProblem("UF1")
-		.withAlgorithm("NSGAII")
+		.withAlgorithm("NSGAV")
 		.withMaxEvaluations(10000)
 		.distributeOnAllCores()
 		.run();
@@ -132,9 +132,9 @@ public class Example1 {
 	public static void test4(){
         //configure and run this experiment
 		NondominatedPopulation result = new Executor()
-				.withProblemClass(MyDTLZ2_Dung.class)
-				//.withProblem("UF1")
-				.withAlgorithm("NSGAIV")
+				//.withProblemClass(MyDTLZ2_Dung.class)
+				.withProblem("UF1")
+				.withAlgorithm("NSGAV")
 				.withMaxEvaluations(10000)
 				.distributeOnAllCores()
 				.run();
