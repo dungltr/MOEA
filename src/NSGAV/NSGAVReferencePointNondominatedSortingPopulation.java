@@ -26,6 +26,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Comparator;
+import java.io.Serializable;
+
+
+
 
 import org.moeaframework.core.FrameworkException;
 import org.moeaframework.core.NondominatedSortingPopulation;
@@ -627,11 +631,15 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	}
 	public static double[] average (List<Solution> solutions,int numberOfObjectives) {
 		double [] averagePoint = new double[numberOfObjectives];
-		for (Solution solution : solutions) {
-			for (int i = 0; i < numberOfObjectives; i++) {
+		for (int i = 0; i < numberOfObjectives; i++) {
+			averagePoint[i] = 0;
+			for (Solution solution : solutions) {
+				NSGAIV.utilsPopulation.printSolution(solution);
 				averagePoint[i] = averagePoint[i] - solution.getObjective(i)/solutions.size();
+				System.out.println("\n The solution.getObjective("+i+")"+solution.getObjective(i));
+				System.out.println("\n The solution.solutions.size()"+solutions.size());
+				}
 			}
-		}
 		NSGAIV.matrixPrint.printArray(averagePoint);
 		return averagePoint;
 	}
@@ -661,13 +669,30 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		return result;
 	}
 	public static int compareSolution(Solution solution1, Solution solution2) {
-		int a=0;
-		return a;
-	};
+		return compare(solution1, solution2);
+	}
+	public static int compareSolutionAproximate(Solution solution1, Solution solution2, int k, double beta) {
+		return compareAproximate(solution1, solution2, k, beta);
+	}
+	public static double[] addDelta(double[] objectives, double[] delta){
+		double [] temp = new double[objectives.length];
+		for (int i = 0; i< objectives.length; i++){
+			temp[i] = objectives[i] - delta[i];
+		}
+		return temp;
+	}
+	public static double[] updateObjecitves(double[] objectives, double epsilon, int k){
+		double [] temp = new double[objectives.length];
+		for (int i = 0; i< objectives.length; i++){
+			temp[i] = objectives[i] + k*epsilon;
+		}
+		return temp;
+	}
 	public static Population filter (Population previousFront, Population currentFront, int newSize, int numberOfObjectives) {//,Comparator<? super Solution> comparator) {
 		Population resultFilter = new Population();	
-		List<Solution> solutionsCurrentFront = getAllSolution(currentFront);		
-		List<Solution> solutionsPreviousFront = getAllSolution(previousFront);
+		//List<Solution> solutionsCurrentFront = getAllSolution(currentFront);		
+		//List<Solution> solutionsPreviousFront = getAllSolution(previousFront);
+		/*
 		System.out.println("\nThe average CurrentPoint");
 		averageCurrentPoint = average(solutionsCurrentFront,numberOfObjectives);
 		System.out.println("\nThe average PreviousPoint");
@@ -678,10 +703,13 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			delta[i] = averageCurrentPoint[i] - averagePreviousPoint[i];
 		System.out.println("\nThe Delta");
 		NSGAIV.matrixPrint.printArray(delta);
+		*/
 		//int N = previousFront.size()+currentFront.size();
+		double epsilon = 0.01;
 		int k=0;
 		int S=0;
-		while (S<newSize && k<3) {
+		while (S<newSize&&k<100000) {
+			System.out.println("The newSize is"+newSize);
 			resultFilter.clear();
 			k++;
 			//System.out.println("\nThis is the previousFront");
@@ -690,19 +718,22 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			for (Solution solution: previousFront) {
 				temp.add(solution);
 			};
-			System.out.println("\nThis is the tempFront");
-			NSGAIV.utilsPopulation.printPopulation(temp);
-			for (int i = 0; i<temp.size();i++)
+			//System.out.println("\nThis is the tempFront");
+			//NSGAIV.utilsPopulation.printPopulation(temp);
+/*			for (int i = 0; i<temp.size();i++)
 				for (int j=0; j<numberOfObjectives;j++){
 					double objectTemp = temp.get(i).getObjective(j);
-					System.out.println("\nThis is the objectTemp"+objectTemp);
-					System.out.println("\nThis is the delta[j]"+delta[j]);
-					temp.get(i).setObjective(j,objectTemp + delta[j]);
+					//System.out.println("\nThis is the objectTemp"+objectTemp);
+					//System.out.println("\nThis is the delta[j]"+delta[j]);
+					temp.get(i).setObjective(j,objectTemp);// - delta[j]);// because the delta is negative when reading
 				}
+*/				
 			System.out.println("\nThis is the previousFront");
 			NSGAIV.utilsPopulation.printPopulation(previousFront);
 			System.out.println("\nThis is the tempFront");
 			NSGAIV.utilsPopulation.printPopulation(temp);
+			System.out.println("\nThis is the CurrentFront");
+			NSGAIV.utilsPopulation.printPopulation(currentFront);
 			//for (Solution solution : currentFront)
 			//temp.add(solution);
 			// precompute the dominance relations
@@ -711,37 +742,72 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			for (int i = 0; i < currentFront.size(); i++) {
 				Solution si = currentFront.get(i);				
 				for (int j = 0; j < previousFront.size(); j++) {
-						Solution sj = temp.get(j);						
-						//NSGAVObjectiveComparator Comparator;
-						dominanceChecks[i][j] = compareSolution(si, sj);//.compare(si, sj);
+						Solution sj = temp.get(j);
+						//sj.setObjectives(updateObjecitves(temp.get(j).getObjectives(),epsilon,k));
+						System.out.println("\nThis is the newest si");
+						NSGAIV.utilsPopulation.printSolution(si);
+						System.out.println("\nThis is the newest sj");
+						NSGAIV.utilsPopulation.printSolution(sj);
+						System.out.println("\nThis is the newest k*epsilon:"+k*epsilon);
+						dominanceChecks[i][j] = compareSolutionAproximate(si, sj, k, epsilon);//.compare(si, sj);
+						System.out.println("\nThis is the newest dominanceChecks[i][j]:"+dominanceChecks[i][j]);
 						//dominanceChecks[j][i] = -dominanceChecks[i][j];
 				}
 			}
+			
 			/////////
 			//int[] dominatedCounts = new int[previousFront.size()];
 			//List<List<Integer>> dominatesList = new ArrayList<List<Integer>>();
 			//List<Integer> Front = new ArrayList<Integer>();			
 			for (int i = 0; i < currentFront.size(); i++) {
 				List<Integer> dominates = new ArrayList<Integer>();
-				int dominatedCount = 0;			
+				int dominatedCount = 0;	
+				int dominatesCount = 0;	
 				for (int j = 0; j < previousFront.size(); j++) {
 						if (dominanceChecks[i][j] < 0) {
+							System.out.println("There is a result----------------------------------------"+dominanceChecks[i][j]);
+							//System.out.println("\nThis is an element in currentFront");
+							//NSGAIV.matrixPrint.printArray(currentFront.get(i).getObjectives());
+							//System.out.println("\nThis is an element in previousFront");
+							//NSGAIV.matrixPrint.printArray(previousFront.get(j).getObjectives());
 							dominates.add(j);
-						} else //if (dominanceChecks[j][i] < 0) {
+							dominatesCount += 1;
+						} else /*if (dominanceChecks[j][i] < 0)*/ {
 							dominatedCount += 1;
-//						}
+							System.out.println("There is not a result----------------------------------------"+dominanceChecks[i][j]);
+							//System.out.println("There is a not result"+dominanceChecks[i][j]);
+							//System.out.println("\nThis is an element in currentFront");
+							//NSGAIV.matrixPrint.printArray(currentFront.get(i).getObjectives());
+							//System.out.println("\nThis is an element in previousFront");
+							//NSGAIV.matrixPrint.printArray(previousFront.get(j).getObjectives());
+						}
 				}
 				
-				if (dominatedCount == 0) {
+				if (dominatesCount != 0) {
 					//Front.add(i);
 					Solution solution = currentFront.get(i);
 					resultFilter.add(solution);
-				}				
+				}		
+				if (resultFilter.size()==newSize) {
+					System.out.println("The size of results interrupted at k = "+k+"and Size:="+resultFilter.size());
+					NSGAIV.utilsPopulation.printPopulation(resultFilter);
+					for (int m = 0; m<previousFront.size();m++){
+						for (int j=0; j<numberOfObjectives;j++){
+							double objectTemp = temp.get(m).getObjective(j);
+							//System.out.println("\nThis is the objectTemp"+objectTemp);
+							//System.out.println("\nThis is the delta[j]"+delta[j]);
+							temp.get(m).setObjective(j,objectTemp);// + k*delta[j]);// because the delta is negative when reading
+						}
+					}
+					return resultFilter;
+				}
 				//dominatesList.add(dominates);
 				//dominatedCounts[i] = dominatedCount;
 			}
+			
 			S = resultFilter.size();
 			System.out.println("The size of result is:="+S);
+			NSGAIV.utilsPopulation.printPopulation(resultFilter);
 		}
 		return resultFilter;
 	}
@@ -801,14 +867,27 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			}
 
 			removeAll(front);
+			
 			int N = size - size();// size = 100; size() is the members of previous front
 			System.out.println("The solution more is:="+size+"-"+size()+"="+N);
+			System.out.println("The original previous Population is:*************************************");
+			NSGAIV.utilsPopulation.printPopulation(previousFront);
 			Population resultFilter = filter(previousFront, currentFront, N, numberOfObjectives);//,comparator);
+			for (Solution solution : resultFilter){
+				add(solution);
+			}					
+			System.out.println("\nThe previous Population is:*************************************");
+			NSGAIV.utilsPopulation.printPopulation(previousFront);
+			System.out.println("\nThe current Population is:*************************************");
+			NSGAIV.utilsPopulation.printPopulation(currentFront);
+			System.out.println("\nThe new Population is:*************************************");
+			NSGAIV.utilsPopulation.printPopulation(this);
+			System.out.println("\nThe end of *************************************");
 			//System.out.println("The result more is:="+resultFilter.size());
 			// associate each solution to a reference point
-			List<List<Solution>> members = associateToReferencePoint(this);
-			List<List<Solution>> potentialMembers = associateToReferencePoint(front);
-			Set<Integer> excluded = new HashSet<Integer>();
+			//List<List<Solution>> members = associateToReferencePoint(this);
+			//List<List<Solution>> potentialMembers = associateToReferencePoint(front);
+			//Set<Integer> excluded = new HashSet<Integer>();
 			/*
 			// loop over niche-preservation operation until population is full
 			while (size() < size) {
@@ -862,11 +941,73 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	public void truncate(int size) {
 		truncate(size, new RankComparator());
 	}
-	public int compare(Solution solution1, Solution solution2) {
-		double value1 = solution1.getObjective(objective);
-		double value2 = solution2.getObjective(objective);
+	public static int compare(Solution solution1, Solution solution2) {
+		boolean dominate1 = false;
+		boolean dominate2 = false;
 
-		return Double.compare(value1, value2);
+		for (int i = 0; i < solution1.getNumberOfObjectives(); i++) {
+			if (solution1.getObjective(i) < solution2.getObjective(i)) {
+				dominate1 = true;
+
+				if (dominate2) {
+					return 0;
+				}
+			} else if (solution1.getObjective(i) > solution2.getObjective(i)) {
+				dominate2 = true;
+
+				if (dominate1) {
+					return 0;
+				}
+			}
+		}
+
+		if (dominate1 == dominate2) {
+			return 0;
+		} else if (dominate1) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+	public static int compareAproximate(Solution solution1, Solution solution2, int k, double beta) {
+		boolean dominate1 = false;
+		boolean dominate2 = false;
+		double Delta = beta;//beta;
+		for (int i = 0; i < solution1.getNumberOfObjectives(); i++) {
+			if (solution1.getObjective(i) < solution2.getObjective(i)+k*Delta) {
+				double si = solution1.getObjective(i);
+				double sj = solution2.getObjective(i)+k*Delta;
+				System.out.println("\n k:================="+k);
+				System.out.println("\n Comparing solution1.getObjective(i)"+si);
+				System.out.println("\n Comparing solution2.getObjective(i)"+sj);
+				System.out.println("\n Comparing solution1.getObjective(i)"+solution1.getObjective(i)+"with solution2.getObjective(i)+beta"+solution2.getObjective(i)+"and"+beta);
+				dominate1 = true;
+
+				if (dominate2) {
+					return 0;
+				}
+			} else if (solution1.getObjective(i) > solution2.getObjective(i)+k*Delta) {
+				double si = solution1.getObjective(i);
+				double sj = solution2.getObjective(i)+k*Delta;
+				System.out.println("\n Wrong------------------------------");
+				System.out.println("\n Comparing solution1.getObjective(i)"+si);
+				System.out.println("\n Comparing solution2.getObjective(i)"+sj);
+				dominate2 = true;
+
+				if (dominate1) {
+					return 0;
+				}
+			}
+		}
+
+		if (dominate1 == dominate2) {
+			return 0;
+		} else if (dominate1) {
+			System.out.println("\n True");
+			return -1;
+		} else {
+			return 1;
+		}
 	}
 	
 }

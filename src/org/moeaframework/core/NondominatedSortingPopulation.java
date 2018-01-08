@@ -77,10 +77,10 @@ public class NondominatedSortingPopulation extends Population {
 		
 		if (Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new FastNondominatedSorting(comparator);
-			System.out.println("Using FastNondominatedSorting");
+			//System.out.println("Using FastNondominatedSorting");
 		} else {
 			nondominatedSorting = new NondominatedSorting(comparator);
-			System.out.println("Using Original NondominatedSorting");
+			//System.out.println("Using Original NondominatedSorting");
 		}
 	}
 
@@ -183,7 +183,7 @@ public class NondominatedSortingPopulation extends Population {
 	 */
 	public void truncate(int size) {
 		truncate(size, new NondominatedSortingComparator());
-		System.out.println("-----------------lalalal--------------------------------");
+		//System.out.println("-----------------lalalal--------------------------------");
 	}
 	
 	/**
@@ -195,7 +195,7 @@ public class NondominatedSortingPopulation extends Population {
 	 */
 	public void prune(int size) {
 		if (modified) {
-			System.out.println("-----------------lololol--------------------------------");
+			//System.out.println("-----------------lololol--------------------------------");
 			update();
 		}
 
@@ -224,7 +224,7 @@ public class NondominatedSortingPopulation extends Population {
 			nondominatedSorting.updateCrowdingDistance(front);
 			front.truncate(front.size()-1, new CrowdingComparator());
 			//////////////////////////////////////
-			System.out.println("-----------------lelelel--------------------------------");
+			/*System.out.println("-----------------lelelel--------------------------------");
 			double[] MaxRank = new double [1];
 			MaxRank[0] = (double) size(); 
 			try {
@@ -233,6 +233,7 @@ public class NondominatedSortingPopulation extends Population {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			}
+			*/
 			//////////////////////////////////////
 		}
 		
