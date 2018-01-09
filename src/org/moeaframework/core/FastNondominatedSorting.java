@@ -67,7 +67,7 @@ public class FastNondominatedSorting extends NondominatedSorting {
 	@Override
 	public void evaluate(Population population) {
 		int N = population.size();
-		
+		System.out.println("hello from FastNondominatedSorting.java in org.moeaframework.core");
 		// precompute the dominance relations
 		int[][] dominanceChecks = new int[N][N];
 		

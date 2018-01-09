@@ -131,7 +131,7 @@ public class Example0 {
                     .withProblemClass(MO.class)
                     .withAlgorithm("NSGAV")
                     .withMaxEvaluations(iteration)
-                    .withProperty("populationSize", 10)
+                    .withProperty("populationSize", 2)
                     //.withProperty("org.moeaframework.core.fast_nondominated_sorting",false)
                     .run();
             System.out.println("Num of Solutions: "+ result.size());

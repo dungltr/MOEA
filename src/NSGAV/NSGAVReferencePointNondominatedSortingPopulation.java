@@ -703,6 +703,55 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		}
 		return Deltas;
 	}
+	public static List<double []> updateReduceDeltas (List<double []> Deltas){
+		for (int i = 0; i < Deltas.size(); i++) {
+			double [] temp = new double [Deltas.get(i).length];
+			for (int j = 0; j < Deltas.get(i).length; j++) {
+				Deltas.get(i)[j] = -Math.abs(Deltas.get(i)[j])/2;
+			}
+			//System.out.println("\n This is the solution:");
+			//NSGAIV.utilsPopulation.printSolution(solution);
+			//System.out.println("\n This is the delta");
+			//NSGAIV.matrixPrint.printArray(Deltas.get(i));
+		}
+		return Deltas;
+	}
+	public static List<double []> updateIncreaseDeltas (List<double []> Deltas){
+		for (int i = 0; i < Deltas.size(); i++) {
+			double [] temp = new double [Deltas.get(i).length];
+			for (int j = 0; j < Deltas.get(i).length; j++) {
+				Deltas.get(i)[j] = Math.abs(Deltas.get(i)[j]);
+			}
+			//System.out.println("\n This is the solution:");
+			//NSGAIV.utilsPopulation.printSolution(solution);
+			//System.out.println("\n This is the delta");
+//			NSGAIV.matrixPrint.printArray(Deltas.get(i));
+		}
+		return Deltas;
+	}
+	public static Solution findMaxSolution (Population resultFilter){
+		double[] Distance = new double[resultFilter.size()];
+		int i = 0;
+		for (Solution solution: resultFilter) {
+			Distance[i] = 0;
+			for (int j = 0; j < solution.getNumberOfObjectives(); j++) {
+				Distance[i] += solution.getObjective(j)*solution.getObjective(j);
+			}
+			i++;
+			//System.out.println("\n This is the solution:");
+			//NSGAIV.utilsPopulation.printSolution(solution);
+			//System.out.println("\n This is the delta");
+//			NSGAIV.matrixPrint.printArray(Deltas.get(i));
+		}
+		double max = 0;
+		int index = 0;
+		for (i=0; i<Distance.length;i++){
+			max = Math.max(max, Distance[i]);
+			if (max==Distance[i]) index = i;
+		}
+			
+		return resultFilter.get(index);
+	}
 	public static Population filter (Population previousFront, Population currentFront, int newSize, int numberOfObjectives) {//,Comparator<? super Solution> comparator) {
 		Population resultFilter = new Population();	
 		//List<Solution> solutionsCurrentFront = getAllSolution(currentFront);		
@@ -735,7 +784,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		//System.out.println("\nThis is the Deltas");
 		List<double []> Deltas = updateDeltas (temp, epsilon);
 		
-		while (S<newSize) {
+		while (S!=newSize) {
 			//System.out.println("The newSize is"+newSize);
 			resultFilter.clear();
 			k++;
@@ -807,34 +856,53 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 						}
 				}
 				
-				if (dominatesCount != 0) {
+				if (dominatedCount == 0) {
 					//Front.add(i);
 					Solution solution = currentFront.get(i);
 					resultFilter.add(solution);
 				}		
-				if (resultFilter.size()==newSize) {
-					System.out.println("The size of results interrupted at k = "+k+"and Size:="+resultFilter.size());
-					//NSGAIV.utilsPopulation.printPopulation(resultFilter);
-					for (int m = 0; m<previousFront.size();m++){
-						temp.get(m).setObjectives(Store.get(m));
-						//for (int j=0; j<numberOfObjectives;j++){
-							//double objectTemp = temp.get(m).getObjective(j);
-							//double[]
-							//System.out.println("\nThis is the objectTemp"+objectTemp);
-							//System.out.println("\nThis is the delta[j]"+delta[j]);
-							//temp.get(m).setObjective(j,objectTemp);// + k*delta[j]);// because the delta is negative when reading
-						//}
-					}
-					return resultFilter;
-				}
+				
 				//dominatesList.add(dominates);
 				//dominatedCounts[i] = dominatedCount;
 			}
-			
+			if (resultFilter.size()>=newSize) {
+				if (resultFilter.size()==newSize){
+					System.out.println("The size of results interrupted at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
+						//NSGAIV.utilsPopulation.printPopulation(resultFilter);
+					for (int m = 0; m<previousFront.size();m++){
+						temp.get(m).setObjectives(Store.get(m));
+							//for (int j=0; j<numberOfObjectives;j++){
+								//double objectTemp = temp.get(m).getObjective(j);
+								//double[]
+								//System.out.println("\nThis is the objectTemp"+objectTemp);
+								//System.out.println("\nThis is the delta[j]"+delta[j]);
+								//temp.get(m).setObjective(j,objectTemp);// + k*delta[j]);// because the delta is negative when reading
+							//}
+					}
+//					return resultFilter;
+				}else{	System.out.println("**************************Need to reduce Deltas at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
+						//currentFront.clear();
+						//currentFront = resultFilter;
+						//currentFront.remove(findMaxSolution (currentFront));
+						while(resultFilter.size()>newSize)
+						resultFilter.remove(findMaxSolution (resultFilter));			
+						System.out.println("After reduce Deltas at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
+						//updateReduceDeltas(Deltas);
+						for (int m = 0; m<previousFront.size();m++){
+							temp.get(m).setObjectives(Store.get(m));
+						}
+//						S = resultFilter.size();
+				}
+			}//else {
 			S = resultFilter.size();
+				//updateIncreaseDeltas (Deltas);
+//			}		
 			//System.out.println("The size of result is:="+S);
 			//NSGAIV.utilsPopulation.printPopulation(resultFilter);
 		}
+//		if (S==newSize){
+			
+//		}		
 		return resultFilter;
 	}
 	/**

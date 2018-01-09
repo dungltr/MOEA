@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
+import org.moeaframework.Analyzer;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.Solution;
@@ -89,8 +90,9 @@ public class Example1 {
 
 	public static void main(String[] args) {
 		//test1();
-		test3();
+		//test3();
 		//test4();
+		test5();
 		//configure and run this experiment
 		
 	}
@@ -147,6 +149,27 @@ public class Example1 {
 			solution.getObjective(0),
 			solution.getObjective(1));
 		}
+	}
+	public static void test5(){
+		String problem = "UF1";
+
+        //setup the experiment
+        Executor executor = new Executor()
+                .withProblem(problem)
+                .withMaxEvaluations(10000);
+
+        Analyzer analyzer = new Analyzer()
+                .withProblem(problem)
+                .includeHypervolume()
+                .showStatisticalSignificance();
+
+        analyzer.addAll("NSGA-II with Replacement", executor.withAlgorithm("NSGA-II").withProperty("withReplacement", true).runSeeds(50));
+        analyzer.addAll("NSGAV with Replacement", executor.withAlgorithm("NSGAV").withProperty("withReplacement", true).runSeeds(50));      
+        analyzer.addAll("NSGA-II without Replacement", executor.withAlgorithm("NSGA-II").withProperty("withReplacement", false).runSeeds(50));
+        analyzer.addAll("NSGAV without Replacement", executor.withAlgorithm("NSGAV").withProperty("withReplacement", false).runSeeds(50));
+
+        //print the results
+        analyzer.printAnalysis();
 	}
 
 }
