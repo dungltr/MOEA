@@ -90,9 +90,9 @@ public class Example1 {
 
 	public static void main(String[] args) {
 		//test1();
-		//test3();
+		test3();
 		//test4();
-		test5();
+		//test5();
 		//configure and run this experiment
 		
 	}

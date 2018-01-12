@@ -77,9 +77,11 @@ public class NSGAVProvider extends AlgorithmProvider {
 		}
 	}
 	private Algorithm newNSGAV(TypedProperties properties, Problem problem) {
+		
 		int divisionsOuter = 4;
 		int divisionsInner = 0;
-		System.out.println("Say hello from NSGAV provider");
+		/*
+		//System.out.println("Say hello from NSGAV provider");
 		if (properties.contains("divisionsOuter") && properties.contains("divisionsInner")) {
 			divisionsOuter = (int)properties.getDouble("divisionsOuter", 4);
 			divisionsInner = (int)properties.getDouble("divisionsInner", 0);
@@ -127,7 +129,11 @@ public class NSGAVProvider extends AlgorithmProvider {
 			// round up to a multiple of 4
 			populationSize = (int)Math.ceil(populationSize / 4d) * 4;
 		}
-		
+		*/
+		int populationSize = 100;
+		if (properties.contains("populationSize")) {
+			populationSize = (int)properties.getDouble("populationSize", 100);	
+		}	
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);// Create initialization
 		
@@ -176,6 +182,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		// disable swapping variables in SBX operator to remain consistent with
 		// Deb's implementation (thanks to Haitham Seada for identifying this
 		// discrepancy)
+		/*
 		if (!properties.contains("sbx.swap")) {
 			properties.setBoolean("sbx.swap", false);
 		}
@@ -187,7 +194,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		if (!properties.contains("pm.distributionIndex")) {
 			properties.setDouble("pm.distributionIndex", 20.0);
 		}
-
+		*/
 		Variation variation = OperatorFactory.getInstance().getVariation(null, 
 				properties, problem);// Create variation
 

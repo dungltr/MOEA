@@ -16,6 +16,8 @@
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.moeaframework.Analyzer;
 import org.moeaframework.Executor;
@@ -27,9 +29,31 @@ import org.moeaframework.Executor;
 public class Example2 {
 
 	public static void main(String[] args) throws IOException {
-		String problem = "UF1";
-		String[] algorithms = { "NSGAII", "GDE3", "eMOEA" };//"NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };
-
+		List<String> Problems = new ArrayList<>();
+		
+		String[] problems = {"UF1","UF2","UF3","DTLZ1.8D","DTLZ2.8D","DTLZ3.8D"};
+		String[] UF = {"UF1","UF2","UF3"};
+		String[] ZDT = {"ZDT1","ZDT2","ZDT3"};
+		String[] DTLZ_2 = {"DTLZ1_2","DTLZ2_2","DTLZ3_2"};
+		String[] DTLZ_3 = {"DTLZ1_3","DTLZ2_3","DTLZ3_3"};
+		String[] DTLZ_8 = {"DTLZ1_8","DTLZ2_8","DTLZ3_8"};
+		Problems = addToString(Problems,UF);
+		Problems = addToString(Problems,ZDT);
+		Problems = addToString(Problems,DTLZ_3);
+		//Problems = addToString(Problems,DTLZ_8);
+		String[] algorithms = { "NSGAV", "GDE3", "eMOEA","NSGAIII", "NSGAII"};//, "GDE3", "eMOEA" };
+		for (int i = 0; i<Problems.size(); i++){
+			System.out.println("Testing algorithms on: "+Problems.get(i));
+			testUF(Problems.get(i),algorithms);
+		}
+	}
+	public static List<String> addToString (List<String> Problems, String[] problems){
+		for (int i =0; i < problems.length; i++)
+			Problems.add(problems[i]);
+		return Problems;
+		
+	}
+	public static void testUF(String problem, String[] algorithms){
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -37,6 +61,7 @@ public class Example2 {
 
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
+				.includeGenerationalDistance()
 				.includeHypervolume()
 				.showStatisticalSignificance();
 
@@ -47,7 +72,9 @@ public class Example2 {
 		}
 
 		//print the results
+		analyzer.showAggregate();
 		analyzer.printAnalysis();
+		analyzer.showStatisticalSignificance();
 	}
 	
 }
