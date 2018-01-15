@@ -742,6 +742,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		}
 		return Deltas;
 	}
+	/*
 	public static Solution findMaxSolution (Population resultFilter){
 		double[] Distance = new double[resultFilter.size()];
 		int i = 0;
@@ -765,12 +766,109 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			
 		return resultFilter.get(index);
 	}
+	*/
 	protected static Solution updateObjecitvesCurrent(Solution solution, double[] epsilon){
 		Solution tempSolution = solution;
 		for (int i = 0; i< solution.getNumberOfObjectives(); i++){
 			tempSolution.setObjective(i, solution.getObjective(i) - epsilon[i]);
 		}
 		return tempSolution;
+	}
+	protected static Solution findMaxSolution (Population resultFilter){
+		double[] Distance = new double[resultFilter.size()];
+		for (int i=0; i<resultFilter.size();i++) {
+			Distance[i] = 0;
+			for (int j = 0; j < resultFilter.get(i).getNumberOfObjectives(); j++) {
+				Distance[i] = Distance[i] + resultFilter.get(i).getObjective(j)*resultFilter.get(i).getObjective(j);
+			}
+		}
+		double max = 0;
+		int index = 0;
+		for (int i=0; i<Distance.length;i++){
+			max = Math.max(max, Distance[i]);
+			if (max==Distance[i]) {
+				index = i;
+			}
+		}		
+		return resultFilter.get(index);
+	}
+	protected static Solution findMinSolution (Population resultFilter){
+		double[] Distance = new double[resultFilter.size()];
+		for (int i=0; i<resultFilter.size();i++) {
+			Distance[i] = 0;
+			for (int j = 0; j < resultFilter.get(i).getNumberOfObjectives(); j++) {
+				Distance[i] = Distance[i] + resultFilter.get(i).getObjective(j)*resultFilter.get(i).getObjective(j);
+			}
+		}
+		double min = Double.POSITIVE_INFINITY;;
+		int index = 0;
+		for (int i=0; i<Distance.length;i++){
+			min = Math.min(min, Distance[i]);
+			if (min==Distance[i]) {
+				index = i;
+			}
+		}
+		return resultFilter.get(index);
+	}
+	protected static int findMinSolutionIndex (Population resultFilter){
+		double[] Distance = new double[resultFilter.size()];
+		for (int i=0; i<resultFilter.size();i++) {
+			Distance[i] = 0;
+			for (int j = 0; j < resultFilter.get(i).getNumberOfObjectives(); j++) {
+				Distance[i] = Distance[i] + resultFilter.get(i).getObjective(j)*resultFilter.get(i).getObjective(j);
+			}
+		}
+		double min = Double.POSITIVE_INFINITY;;
+		int index = 0;
+		for (int i=0; i<Distance.length;i++){
+			min = Math.min(min, Distance[i]);
+			if (min==Distance[i]) {
+				index = i;
+			}
+		}
+		return index;
+	}
+	protected static double distance(Solution solution){
+		double distance = 0;
+		for (int i = 0; i< solution.getNumberOfObjectives();i++){
+			distance = distance + solution.getObjective(i)*solution.getObjective(i);
+		}
+		return distance;
+	}
+	protected static double [] backUpsolution(Solution solution, double epsilon){
+		double [] Deltas = new double[solution.getNumberOfObjectives()];
+		for (int j = 0; j< solution.getNumberOfObjectives(); j++) {
+			Deltas[j] = Math.abs(solution.getObjective(j)*epsilon);
+		}
+		return Deltas;
+	}
+	protected static List<double[]> initDelta(Solution currentMin, int index, Solution previousMax, List<double[]> Deltas){
+		double distanceMax = distance(previousMax);
+
+		double distanceMin = distance(currentMin);
+		double distanceMinOld = distanceMin;
+		//System.out.println("The system are in while with distanceMin: "+distanceMin);
+		List<double []> deltas = Deltas;
+		double[] backUpCurrentMin = backUpsolution(currentMin,1);
+		int k=0;
+		Solution tempSolution = currentMin;
+		while((distanceMin>distanceMax)&&(distanceMin<=distanceMinOld)){
+			k=k+1;
+			for (int i = 0; i< currentMin.getNumberOfObjectives(); i++){
+				tempSolution.setObjective(i, currentMin.getObjective(i) - Deltas.get(index)[i]);
+				for (int j=0; j< deltas.size(); j++){
+					deltas.get(j)[i] = deltas.get(j)[i]+Deltas.get(j)[i];
+				}
+			}
+			distanceMin = distance(currentMin);
+			//System.out.println("The system are in while with distanceMin: "+distanceMin+" and distanceMax: " + distanceMax);
+			//utilsPopulation.printArray(Deltas.get(index));
+		}
+		//if (k>0) System.out.println("The sys tem reduce in the step: "+k);
+		for (int i = 0; i< currentMin.getNumberOfObjectives(); i++){
+			currentMin.setObjective(i, backUpCurrentMin[i]);
+		}
+		return deltas;
 	}
 	public static Population filter (Population previousFront, Population currentFront, int newSize, int numberOfObjectives) {//,Comparator<? super Solution> comparator) {
 		Population resultFilter = new Population();	
@@ -792,6 +890,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			 
 		double epsilon = 0.01;
 		int k=0;
+		int k_Max = 1000;
 		//int S=0;
 		/*Population temp = new Population();
 		for (Solution solution: previousFront) {
@@ -828,6 +927,13 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			List<Integer> storeIndex = new ArrayList<Integer>();
 			resultFilter.clear();
 			k++;
+			if (k>k_Max) {
+				while (currentFront.size() > newSize) {
+					currentFront.remove(findMaxSolution(currentFront));
+				}
+				System.out.println("The end of Filter");
+				return currentFront;
+			}
 			//System.out.println("\nThis is the previousFront");
 			//NSGAIV.utilsPopulation.printPopulation(previousFront);
 			
@@ -853,8 +959,18 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			int[][] dominanceChecks = new int[currentFront.size()][previousFront.size()];
 			
 			for (int i = 0; i < currentFront.size(); i++) {
-				//Solution si = currentFront.get(i);
-				Solution si = updateObjecitvesCurrent(temp.get(i),Deltas.get(i));
+				Solution si;
+
+				if(k==1) {
+					int index = findMinSolutionIndex(currentFront);
+					Solution currentMin = findMinSolution(currentFront);
+					Solution previousMax = findMinSolution(previousFront);
+					List<double[]> BigDeltas = initDelta(currentMin,index,previousMax,Deltas);
+					si = updateObjecitvesCurrent(temp.get(i),BigDeltas.get(i));
+				} else{
+					si = updateObjecitvesCurrent(temp.get(i),Deltas.get(i));
+				}
+				//Solution si = updateObjecitvesCurrent(temp.get(i),Deltas.get(i));
 				for (int j = 0; j < previousFront.size(); j++) {
 						//Solution sj = temp.get(j);
 						Solution sj = previousFront.get(j);
