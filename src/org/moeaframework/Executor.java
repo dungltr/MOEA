@@ -42,6 +42,9 @@ import org.moeaframework.util.io.FileUtils;
 import org.moeaframework.util.progress.ProgressHelper;
 import org.moeaframework.util.progress.ProgressListener;
 
+import NSGAIV.ReadFile;
+import NSGAIV.writeMatrix2CSV;
+
 /**
  * Configures and executes algorithms while hiding the underlying boilerplate 
  * code needed to setup and safely execute an algorithm.  For example, the 
@@ -703,6 +706,8 @@ public class Executor extends ProblemBuilder {
 	 * @return the individual end-of-run approximation sets
 	 */
 	public List<NondominatedPopulation> runSeeds(int numberOfSeeds) {
+		String dataDirectory = ReadFile.readhome("HOME_jMetaData");
+		String file = dataDirectory + "/" + algorithmName + "_" + problemName + ".csv";
 		isCanceled.set(false);
 		
 		if ((checkpointFile != null) && (numberOfSeeds > 1)) {
@@ -719,6 +724,9 @@ public class Executor extends ProblemBuilder {
 		progress.start(numberOfSeeds, maxEvaluations, maxTime);
 		
 		for (int i = 0; i < numberOfSeeds && !isCanceled.get(); i++) {
+			double [] computeTime = new double [2];
+			computeTime [0] = i;
+			long start = System.currentTimeMillis(); 
 			NondominatedPopulation result = runSingleSeed(i+1, numberOfSeeds,
 					createTerminationCondition());
 			
@@ -726,8 +734,18 @@ public class Executor extends ProblemBuilder {
 				results.add(result);
 				progress.nextSeed();
 			}
+			long stop = System.currentTimeMillis();
+			computeTime [1] = (double) (stop-start);
+			try {
+				writeMatrix2CSV.addArray2Csv(file, computeTime);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("The system take the number of miliseconds is:"+computeTime [1]);
 		}
 		
+		 
 		progress.stop();
 		
 		return results;
