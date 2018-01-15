@@ -25,6 +25,9 @@ import org.moeaframework.Analyzer;
 import org.moeaframework.Executor;
 import org.moeaframework.Instrumenter;
 import org.moeaframework.analysis.collector.Accumulator;
+
+import NSGAIV.ReadFile;
+
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -135,8 +138,10 @@ public class Example2 {
 				
 	}
 	public static void testGenerationalDistance(String problem, String[] algorithms) throws IOException{
-		String File ="/Users/letrung/datanew";
+		String File =ReadFile.readhome("HOME_jMetalData")+"/"+problem;
 		File filePath = new File(File);
+		File fileAnalysis = new File(File+"problem.txt");
+		
 		//filePath.createNewFile();
 		//setup the experiment
 		Executor executor = new Executor()
@@ -145,7 +150,7 @@ public class Example2 {
 
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
-				.saveAnalysis(filePath)
+				//.saveAnalysis(filePath)
 				.includeGenerationalDistance()
 				//.includeHypervolume()
 				.showStatisticalSignificance();
@@ -159,8 +164,11 @@ public class Example2 {
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
+		analyzer.saveData(filePath,"","_"+problem+".txt");
+		if (!fileAnalysis.exists()) fileAnalysis.createNewFile();
+		analyzer.saveAnalysis(fileAnalysis);
 		//analyzer.saveData(filePath, "a", "");
-		analyzer.saveData(filePath,"data","txt");
+		
 		analyzer.showStatisticalSignificance();
 	}
 	public static void testHypervolume(String problem, String[] algorithms){
