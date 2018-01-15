@@ -27,6 +27,7 @@ import org.moeaframework.Instrumenter;
 import org.moeaframework.analysis.collector.Accumulator;
 
 import NSGAIV.ReadFile;
+import NSGAIV.writeMatrix2CSV;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -138,9 +139,12 @@ public class Example2 {
 				
 	}
 	public static void testGenerationalDistance(String problem, String[] algorithms) throws IOException{
-		String File =ReadFile.readhome("HOME_jMetalData")+"/"+problem;
+		String File =ReadFile.readhome("HOME_jMetalData")+"/"+problem+"/GenerationalDistance";
+		String medianFile = File + "/median.csv";
+		String texFile = File + "/median.tex";
+		String reportFile = File + "report.txt";
 		File filePath = new File(File);
-		File fileAnalysis = new File(File+"problem.txt");
+		File fileAnalysis = new File(reportFile);
 		
 		//filePath.createNewFile();
 		//setup the experiment
@@ -153,20 +157,45 @@ public class Example2 {
 				//.saveAnalysis(filePath)
 				.includeGenerationalDistance()
 				//.includeHypervolume()
+				
 				.showStatisticalSignificance();
 
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(50));
+					executor.withAlgorithm(algorithm).runSeeds(5));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
+		/*
+		String[] origin = analyzer.getAnalysis().toString().split("\n");
+		for (int i =0; i< origin.length;i++) {
+			if (origin[i].toLowerCase().contains("median")){
+				System.out.println("-----------------"+origin[i]);
+				origin[i] = origin[i].substring(origin[i].indexOf(":")).replace(": ", "");
+				System.out.println("+++++++++++++++++++++"+origin[i]);
+			}
+		}
+		*/
+		
 		analyzer.saveData(filePath,"","_"+problem+".txt");
 		if (!fileAnalysis.exists()) fileAnalysis.createNewFile();
 		analyzer.saveAnalysis(fileAnalysis);
+		double [] Median = new double[3];
+		String line = Files.readAllLines(Paths.get(reportFile)).get(3);
+		line = line.substring(line.indexOf(":")).replaceAll(": ", "");
+		Median[0] = Double.parseDouble(line);
+		line = Files.readAllLines(Paths.get(reportFile)).get(10);
+		line = line.substring(line.indexOf(":")).replaceAll(": ", "");
+		Median[1] = Double.parseDouble(line);
+		line = Files.readAllLines(Paths.get(reportFile)).get(17);
+		line = line.substring(line.indexOf(":")).replaceAll(": ", "");
+		Median[2] = Double.parseDouble(line);
+		writeMatrix2CSV.addArray2Csv(medianFile, Median);
+		writeMatrix2CSV.addArray2tex(texFile, Median, problem);
+		//analyzer.saveData(filePath, "a", "");
 		//analyzer.saveData(filePath, "a", "");
 		
 		analyzer.showStatisticalSignificance();

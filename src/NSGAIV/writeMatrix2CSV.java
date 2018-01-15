@@ -85,6 +85,19 @@ public class writeMatrix2CSV {
             add = add + tmp[i] + NEW_LINE_SEPARATOR;
             Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
         }
+    public static void addArray2tex(String filename, double[] tmp, String problem) throws IOException {		
+        Path filePath = Paths.get(filename);
+        if (!Files.exists(filePath)) {
+            Files.createFile(filePath);
+            }
+        String add = problem+"&";
+        int i = 0;
+        for (i = 0; tmp.length - 1 > i; i++)
+        add = add + tmp[i] + "&";
+        if (tmp.length - 1 == i)
+        add = add + tmp[i] + "\\\\\n";
+        Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+    }
     public static void addMatrix2Csv(String filename, double[][] tmp) throws IOException {		
             Path filePath = Paths.get(filename);
             if (Files.exists(filePath)) Files.delete(filePath);
