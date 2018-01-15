@@ -36,15 +36,21 @@ public class Example2 {
 		String[] ZDT = {"ZDT1","ZDT2","ZDT3"};
 		String[] DTLZ_2 = {"DTLZ1_2","DTLZ2_2","DTLZ3_2"};
 		String[] DTLZ_3 = {"DTLZ1_3","DTLZ2_3","DTLZ3_3"};
+		String[] DTLZ_4 = {"DTLZ1_4","DTLZ2_4","DTLZ3_4"};
+		String[] DTLZ_6 = {"DTLZ1_6","DTLZ2_6","DTLZ3_6"};
 		String[] DTLZ_8 = {"DTLZ1_8","DTLZ2_8","DTLZ3_8"};
-		Problems = addToString(Problems,UF);
-		Problems = addToString(Problems,ZDT);
-		Problems = addToString(Problems,DTLZ_3);
+		//Problems = addToString(Problems,UF);
+		//Problems = addToString(Problems,ZDT);
+		//Problems = addToString(Problems,DTLZ_2);
+		//Problems = addToString(Problems,DTLZ_3);
+		Problems = addToString(Problems,DTLZ_4);
 		//Problems = addToString(Problems,DTLZ_8);
-		String[] algorithms = { "NSGAV", "GDE3", "eMOEA","NSGAIII", "NSGAII"};//, "GDE3", "eMOEA" };
+		String[] algorithms = { "NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA"};//, "GDE3", "eMOEA" };
 		for (int i = 0; i<Problems.size(); i++){
 			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testUF(Problems.get(i),algorithms);
+			testGenerationalDistance(Problems.get(i),algorithms);
+			testHypervolume(Problems.get(i),algorithms);
+			//testUF(Problems.get(i),algorithms);
 		}
 	}
 	public static List<String> addToString (List<String> Problems, String[] problems){
@@ -72,7 +78,53 @@ public class Example2 {
 		}
 
 		//print the results
-		analyzer.showAggregate();
+		//analyzer.showAggregate();
+		analyzer.printAnalysis();
+		analyzer.showStatisticalSignificance();
+	}
+	public static void testGenerationalDistance(String problem, String[] algorithms){
+		//setup the experiment
+		Executor executor = new Executor()
+				.withProblem(problem)
+				.withMaxEvaluations(10000);
+
+		Analyzer analyzer = new Analyzer()
+				.withProblem(problem)
+				.includeGenerationalDistance()
+				//.includeHypervolume()
+				.showStatisticalSignificance();
+
+		//run each algorithm for 50 seeds
+		for (String algorithm : algorithms) {
+			analyzer.addAll(algorithm, 
+					executor.withAlgorithm(algorithm).runSeeds(50));
+		}
+
+		//print the results
+		//analyzer.showAggregate();
+		analyzer.printAnalysis();
+		analyzer.showStatisticalSignificance();
+	}
+	public static void testHypervolume(String problem, String[] algorithms){
+		//setup the experiment
+		Executor executor = new Executor()
+				.withProblem(problem)
+				.withMaxEvaluations(10000);
+
+		Analyzer analyzer = new Analyzer()
+				.withProblem(problem)
+				//.includeGenerationalDistance()
+				.includeHypervolume()
+				.showStatisticalSignificance();
+
+		//run each algorithm for 50 seeds
+		for (String algorithm : algorithms) {
+			analyzer.addAll(algorithm, 
+					executor.withAlgorithm(algorithm).runSeeds(50));
+		}
+
+		//print the results
+		//analyzer.showAggregate();
 		analyzer.printAnalysis();
 		analyzer.showStatisticalSignificance();
 	}
