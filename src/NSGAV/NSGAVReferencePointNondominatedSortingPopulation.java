@@ -818,7 +818,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 				Distance[i] = Distance[i] + resultFilter.get(i).getObjective(j)*resultFilter.get(i).getObjective(j);
 			}
 		}
-		double min = Double.POSITIVE_INFINITY;;
+		double min = Double.POSITIVE_INFINITY;
 		int index = 0;
 		for (int i=0; i<Distance.length;i++){
 			min = Math.min(min, Distance[i]);

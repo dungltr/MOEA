@@ -26,6 +26,7 @@ import org.moeaframework.Executor;
 import org.moeaframework.Instrumenter;
 import org.moeaframework.analysis.collector.Accumulator;
 
+import NSGAIV.GeneratorLatexTable;
 import NSGAIV.ReadFile;
 import NSGAIV.writeMatrix2CSV;
 
@@ -52,40 +53,27 @@ public class Example2 {
 
 	public static void main(String[] args) throws IOException {
 		List<String> Problems = new ArrayList<>();
-		
+		String File =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA"+"/";
+		String texFile = File + ".tex";
 		//String[] problems = {"UF1","UF2","UF3","DTLZ1.8D","DTLZ2.8D","DTLZ3.8D"};
 		String[] UF = {"UF1","UF2","UF3"};
 		String[] ZDT = {"ZDT1","ZDT2","ZDT3"};
 		String[] DTLZ_2 = {"DTLZ1_2","DTLZ2_2","DTLZ3_2"};
 		String[] DTLZ_3 = {"DTLZ1_3","DTLZ2_3","DTLZ3_3"};
 		String[] DTLZ_8 = {"DTLZ1_8","DTLZ2_8","DTLZ3_8"};
+		//String[] DTLZ = DTLZ_8;
 		Problems = addToString(Problems,UF);
 		Problems = addToString(Problems,ZDT);
 		Problems = addToString(Problems,DTLZ_8);
 		//Problems = addToString(Problems,DTLZ_8);
 		String[] algorithms = {"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
-		for (int i = 0; i<Problems.size(); i++){
-			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testGenerationalDistance(Problems.get(i),algorithms);
-		}
-		for (int i = 0; i<Problems.size(); i++){
-			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testHypervolume(Problems.get(i),algorithms);
-		}
-		for (int i = 0; i<Problems.size(); i++){
-			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testInvertedGenerationalDistance(Problems.get(i),algorithms);
-			
-		}
-		for (int i = 0; i<Problems.size(); i++){
-			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testMaximumParetoFrontError(Problems.get(i),algorithms);
-		}
-		for (int i = 0; i<Problems.size(); i++){
-			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testContribution(Problems.get(i),algorithms);
-		}
+		//GenerationalDistance(File, Problems, algorithms);
+		Hypervolume(File, Problems, algorithms);
+		//InvertedGenerationalDistance(File, Problems, algorithms);
+		//MaximumParetoFrontError(File, Problems, algorithms);
+		//Contribution(File, Problems, algorithms);
 	}
+	
 	public static List<String> addToString (List<String> Problems, String[] problems){
 		for (int i =0; i < problems.length; i++)
 			Problems.add(problems[i]);
@@ -138,69 +126,63 @@ public class Example2 {
 		*/		
 				
 	}
-	public static void testGenerationalDistance(String problem, String[] algorithms) throws IOException{
-		String File =ReadFile.readhome("HOME_jMetalData")+"/"+problem+"/GenerationalDistance";
-		String medianFile = File + "/median.csv";
-		String texFile = File + "/median.tex";
-		String reportFile = File + "report.txt";
-		File filePath = new File(File);
-		File fileAnalysis = new File(reportFile);
+	public static void GenerationalDistance(String file, List<String> Problems, String[] algorithms)throws IOException{
+		String File = file + "GenerationalDistance";//
+		String texFile = File + ".tex";
+		String Caption = "Generational Distance";
+		File fileTex = new File(texFile);
+		if (!fileTex.exists()){
+			fileTex.createNewFile();
+			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
+		}
 		
-		//filePath.createNewFile();
+		for (int i = 0; i<Problems.size(); i++){
+			System.out.println("Testing algorithms on: "+Problems.get(i));
+			testGenerationalDistance(File, Problems.get(i),algorithms);
+		}
+		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
+	}
+	public static void testGenerationalDistance(String File, String problem, String[] algorithms) throws IOException{		
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
 				.withMaxEvaluations(10000);
-
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
 				//.saveAnalysis(filePath)
 				.includeGenerationalDistance()
 				//.includeHypervolume()
-				
 				.showStatisticalSignificance();
-
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(5));
+					executor.withAlgorithm(algorithm).runSeeds(50));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
-		/*
-		String[] origin = analyzer.getAnalysis().toString().split("\n");
-		for (int i =0; i< origin.length;i++) {
-			if (origin[i].toLowerCase().contains("median")){
-				System.out.println("-----------------"+origin[i]);
-				origin[i] = origin[i].substring(origin[i].indexOf(":")).replace(": ", "");
-				System.out.println("+++++++++++++++++++++"+origin[i]);
-			}
-		}
-		*/
-		
-		analyzer.saveData(filePath,"","_"+problem+".txt");
-		if (!fileAnalysis.exists()) fileAnalysis.createNewFile();
-		analyzer.saveAnalysis(fileAnalysis);
-		double [] Median = new double[3];
-		String line = Files.readAllLines(Paths.get(reportFile)).get(3);
-		line = line.substring(line.indexOf(":")).replaceAll(": ", "");
-		Median[0] = Double.parseDouble(line);
-		line = Files.readAllLines(Paths.get(reportFile)).get(10);
-		line = line.substring(line.indexOf(":")).replaceAll(": ", "");
-		Median[1] = Double.parseDouble(line);
-		line = Files.readAllLines(Paths.get(reportFile)).get(17);
-		line = line.substring(line.indexOf(":")).replaceAll(": ", "");
-		Median[2] = Double.parseDouble(line);
-		writeMatrix2CSV.addArray2Csv(medianFile, Median);
-		writeMatrix2CSV.addArray2tex(texFile, Median, problem);
-		//analyzer.saveData(filePath, "a", "");
-		//analyzer.saveData(filePath, "a", "");
-		
+		GeneratorLatexTable.storeData(analyzer, File, problem);
 		analyzer.showStatisticalSignificance();
 	}
-	public static void testHypervolume(String problem, String[] algorithms){
+	
+	public static void Hypervolume(String file, List<String> Problems, String[] algorithms)throws IOException{
+		String File = file + "Hypervolume";//
+		String texFile = File + ".tex";
+		String Caption = "Hyper volume";
+		File fileTex = new File(texFile);
+		if (!fileTex.exists()){
+			fileTex.createNewFile();
+			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
+		}
+		
+		for (int i = 0; i<Problems.size(); i++){
+			System.out.println("Testing algorithms on: "+Problems.get(i));
+			testHypervolume(File, Problems.get(i),algorithms);
+		}
+		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
+	}
+	public static void testHypervolume(String File, String problem, String[] algorithms){
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -215,15 +197,37 @@ public class Example2 {
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(50));
+					executor.withAlgorithm(algorithm).runSeeds(5));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
+		try {
+			GeneratorLatexTable.storeData(analyzer, File, problem);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		analyzer.showStatisticalSignificance();
 	}
-	public static void testInvertedGenerationalDistance(String problem, String[] algorithms){
+	public static void InvertedGenerationalDistance(String file, List<String> Problems, String[] algorithms)throws IOException{
+		String File = file + "InvertedGenerationalDistance";//
+		String texFile = File + ".tex";
+		String Caption = "Inverted Generational Distance";
+		File fileTex = new File(texFile);
+		if (!fileTex.exists()){
+			fileTex.createNewFile();
+			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
+		}
+		
+		for (int i = 0; i<Problems.size(); i++){
+			System.out.println("Testing algorithms on: "+Problems.get(i));
+			testInvertedGenerationalDistance(File, Problems.get(i),algorithms);
+		}
+		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
+	}
+	public static void testInvertedGenerationalDistance(String File, String problem, String[] algorithms){
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -243,9 +247,31 @@ public class Example2 {
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
+		try {
+			GeneratorLatexTable.storeData(analyzer, File, problem);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		analyzer.showStatisticalSignificance();
 	}
-	public static void testMaximumParetoFrontError(String problem, String[] algorithms){
+	public static void MaximumParetoFrontError(String file, List<String> Problems, String[] algorithms)throws IOException{
+		String File = file + "MaximumParetoFrontError";//
+		String texFile = File + ".tex";
+		String Caption = "Maximum Pareto Front Error";
+		File fileTex = new File(texFile);
+		if (!fileTex.exists()){
+			fileTex.createNewFile();
+			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
+		}
+		
+		for (int i = 0; i<Problems.size(); i++){
+			System.out.println("Testing algorithms on: "+Problems.get(i));
+			testMaximumParetoFrontError(File, Problems.get(i),algorithms);
+		}
+		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
+	}
+	public static void testMaximumParetoFrontError(String File, String problem, String[] algorithms){
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -265,9 +291,31 @@ public class Example2 {
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
+		try {
+			GeneratorLatexTable.storeData(analyzer, File, problem);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		analyzer.showStatisticalSignificance();
 	}
-	public static void testContribution(String problem, String[] algorithms){
+	public static void Contribution(String file, List<String> Problems, String[] algorithms)throws IOException{
+		String File = file + "Contribution";//
+		String texFile = File + ".tex";
+		String Caption = "Contribution";
+		File fileTex = new File(texFile);
+		if (!fileTex.exists()){
+			fileTex.createNewFile();
+			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
+		}
+		
+		for (int i = 0; i<Problems.size(); i++){
+			System.out.println("Testing algorithms on: "+Problems.get(i));
+			testContribution(File, Problems.get(i),algorithms);
+		}
+		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
+	}
+	public static void testContribution(String File, String problem, String[] algorithms){
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -287,6 +335,12 @@ public class Example2 {
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
+		try {
+			GeneratorLatexTable.storeData(analyzer, File, problem);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		analyzer.showStatisticalSignificance();
 	}
 	

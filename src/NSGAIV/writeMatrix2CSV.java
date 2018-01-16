@@ -85,19 +85,70 @@ public class writeMatrix2CSV {
             add = add + tmp[i] + NEW_LINE_SEPARATOR;
             Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
         }
-    public static void addArray2tex(String filename, double[] tmp, String problem) throws IOException {		
+    public static void addHeader2tex(String Caption, String filename, String[] algorithms) throws IOException {		
         Path filePath = Paths.get(filename);
         if (!Files.exists(filePath)) {
             Files.createFile(filePath);
             }
-        String add = problem+"&";
-        int i = 0;
-        for (i = 0; tmp.length - 1 > i; i++)
-        add = add + tmp[i] + "&";
-        if (tmp.length - 1 == i)
-        add = add + tmp[i] + "\\\\\n";
+        String add = "\\begin{table}\n"+
+        			 "\\caption{"+Caption+"}\n"+
+        			 "\\label{table: GD}\n"+
+        			 "\\centering\n"+
+        			 "\\begin{scriptsize}\n"+
+        			 "\\begin{tabular}{llll}\n" + 
+        			 "\\hline ";
+        for (int i=0; i<algorithms.length;i++){
+        	add = add + " & " + algorithms[i];
+        }
+        add = add + "\\\\";
+        add = add + "\n" + "\\hline"+"\n";
         Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
     }
+    public static void addArray2tex(String filename, double[] tmp, String problem) throws IOException {		
+    	double min = Double.POSITIVE_INFINITY;
+    	for (int i = 0; i< tmp.length; i++){
+    		min = Math.min(min, tmp[i]);
+    	}
+    		
+        Path filePath = Paths.get(filename);
+        if (!Files.exists(filePath)) {
+            Files.createFile(filePath);
+            }
+        String add = "";     
+        if (problem.toLowerCase().contains("dtlz")){
+        	String tempString = problem.substring(problem.indexOf("_"));
+        	tempString = problem.replace(tempString, "");
+        	add = add + tempString +" & ";
+        }else{
+        	add = add + problem +" & ";
+        }  
+        int i = 0;
+        for (i = 0; tmp.length - 1 > i; i++){
+        	if (min == tmp[i]){
+        		add = add + "\\cellcolor{gray95}" + String.format ("%6.3e", tmp[i]) + " & ";
+        	}else{
+        		add = add + String.format ("%6.3e", tmp[i]) + " & ";
+        	}
+        }        
+        if (tmp.length - 1 == i){
+        	if (min == tmp[i]){
+        		add = add + "\\cellcolor{gray95}" + String.format ("%6.3e", tmp[i]) + "\\\\\n";
+        	}else{
+        		add = add + String.format ("%6.3e", tmp[i]) + "\\\\\n";
+        	}
+        }    
+        Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+    }
+    public static void addBottom2tex(String filename, String[] algorithms) throws IOException {		
+        Path filePath = Paths.get(filename);
+        if (!Files.exists(filePath)) {
+            Files.createFile(filePath);
+            }
+        String add = "\\hline";
+        add = add + "\n" + "\\end{tabular}\n\\end{scriptsize}\n\\end{table}\n";
+        Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+    }
+    
     public static void addMatrix2Csv(String filename, double[][] tmp) throws IOException {		
             Path filePath = Paths.get(filename);
             if (Files.exists(filePath)) Files.delete(filePath);
