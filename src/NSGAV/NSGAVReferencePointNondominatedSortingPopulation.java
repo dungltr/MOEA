@@ -931,28 +931,13 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 				while (currentFront.size() > newSize) {
 					currentFront.remove(findMaxSolution(currentFront));
 				}
-				System.out.println("The end of Filter");
+				//System.out.println("The end of Filter");
 				return currentFront;
 			}
 			//System.out.println("\nThis is the previousFront");
-			//NSGAIV.utilsPopulation.printPopulation(previousFront);
-			
+				
 			//System.out.println("\nThis is the tempFront");
 			//NSGAIV.utilsPopulation.printPopulation(temp);
-/*			for (int i = 0; i<temp.size();i++)
-				for (int j=0; j<numberOfObjectives;j++){
-					double objectTemp = temp.get(i).getObjective(j);
-					//System.out.println("\nThis is the objectTemp"+objectTemp);
-					//System.out.println("\nThis is the delta[j]"+delta[j]);
-					temp.get(i).setObjective(j,objectTemp);// - delta[j]);// because the delta is negative when reading
-				}
-*/			
-			/*
-			System.out.println("\nThis is the previousFront");
-			NSGAIV.utilsPopulation.printPopulation(previousFront);
-			System.out.println("\nThis is the CurrentFront");
-			NSGAIV.utilsPopulation.printPopulation(currentFront);
-			*/
 			//for (Solution solution : currentFront)
 			//temp.add(solution);
 			// precompute the dominance relations
@@ -970,26 +955,14 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 				} else{
 					si = updateObjecitvesCurrent(temp.get(i),Deltas.get(i));
 				}
-				//Solution si = updateObjecitvesCurrent(temp.get(i),Deltas.get(i));
 				for (int j = 0; j < previousFront.size(); j++) {
-						//Solution sj = temp.get(j);
 						Solution sj = previousFront.get(j);
-						//sj.setObjectives(updateObjecitves(temp.get(j).getObjectives(),Deltas.get(j)));
-						//System.out.println("\nThis is the newest si");
-						//NSGAIV.utilsPopulation.printSolution(si);
-						//System.out.println("\nThis is the newest sj");
-						//NSGAIV.utilsPopulation.printSolution(sj);
-						//System.out.println("\nThis is the newest k*epsilon:"+k*epsilon);
 						dominanceChecks[i][j] = compare(si, sj);//compareSolutionAproximate(si, sj, k, epsilon);//.compare(si, sj);
 						//System.out.println("\nThis is the newest dominanceChecks[i][j]:"+dominanceChecks[i][j]);
 						//dominanceChecks[j][i] = -dominanceChecks[i][j];
 				}
 			}
-			
-			/////////
-			//int[] dominatedCounts = new int[previousFront.size()];
-			//List<List<Integer>> dominatesList = new ArrayList<List<Integer>>();
-			//List<Integer> Front = new ArrayList<Integer>();			
+					
 			for (int i = 0; i < currentFront.size(); i++) {
 				List<Integer> dominates = new ArrayList<Integer>();
 				int dominatedCount = 0;	
@@ -997,38 +970,15 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 				for (int j = 0; j < previousFront.size(); j++) {
 					if (dominanceChecks[i][j] >= 0) {
 						dominatedCount += 1;
-						//dominates.add(j);
-						//dominatesCount += 1;
-					}/*
-						if (dominanceChecks[i][j] < 0) {
-							//System.out.println("There is a result----------------------------------------"+dominanceChecks[i][j]);
-							//System.out.println("\nThis is an element in currentFront");
-							//NSGAIV.matrixPrint.printArray(currentFront.get(i).getObjectives());
-							//System.out.println("\nThis is an element in previousFront");
-							//NSGAIV.matrixPrint.printArray(previousFront.get(j).getObjectives());
-							dominates.add(j);
-							dominatesCount += 1;
-						} else  {
-							dominatedCount += 1;
-							//System.out.println("There is not a result----------------------------------------"+dominanceChecks[i][j]);
-							//System.out.println("There is a not result"+dominanceChecks[i][j]);
-							//System.out.println("\nThis is an element in currentFront");
-							//NSGAIV.matrixPrint.printArray(currentFront.get(i).getObjectives());
-							//System.out.println("\nThis is an element in previousFront");
-							//NSGAIV.matrixPrint.printArray(previousFront.get(j).getObjectives());
-						}
-					*/	
+					}
 				}
 				
 				if (dominatedCount == 0) {
-					//Front.add(i);
 					storeIndex.add(i);
 					//Solution solution = currentFront.get(i);
 					//resultFilter.add(solution);
 				}		
 				
-				//dominatesList.add(dominates);
-				//dominatedCounts[i] = dominatedCount;
 			}
 			if (storeIndex.size()>=newSize) {
 				for (int i = 0; i<currentFront.size();i++){
@@ -1050,10 +1000,10 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 //					return resultFilter;
 				}
 				
-			}//else {
+			}//else {System.out.println("The size of result is:storeIndex.size()<newSize");
 			//S = resultFilter.size();
 				//updateIncreaseDeltas (Deltas);
-//			}		
+			//}		
 			//System.out.println("The size of result is:="+S);
 			//NSGAIV.utilsPopulation.printPopulation(resultFilter);
 		}

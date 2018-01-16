@@ -64,12 +64,12 @@ public class Example2 {
 		//String[] DTLZ = DTLZ_8;
 		Problems = addToString(Problems,UF);
 		Problems = addToString(Problems,ZDT);
-		Problems = addToString(Problems,DTLZ_8);
+		Problems = addToString(Problems,DTLZ_3);
 		//Problems = addToString(Problems,DTLZ_8);
 		String[] algorithms = {"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
 		//GenerationalDistance(File, Problems, algorithms);
-		Hypervolume(File, Problems, algorithms);
-		//InvertedGenerationalDistance(File, Problems, algorithms);
+		//Hypervolume(File, Problems, algorithms);
+		InvertedGenerationalDistance(File, Problems, algorithms);
 		//MaximumParetoFrontError(File, Problems, algorithms);
 		//Contribution(File, Problems, algorithms);
 	}
@@ -80,54 +80,12 @@ public class Example2 {
 		return Problems;
 		
 	}
-	public static void testAll(String problem, String[] algorithms){
-		/*
-		Instrumenter instrumenter = new Instrumenter()
-				.withProblem(problem)
-				.withFrequency(100)
-				.attachElapsedTimeCollector()
-				.attachGenerationalDistanceCollector();
-		*/
-		//setup the experiment
-		Executor executor = new Executor()
-				.withProblem(problem)
-				//.withInstrumenter(instrumenter)
-				.withMaxEvaluations(10000);
-
-		Analyzer analyzer = new Analyzer()
-				.withProblem(problem)
-				.includeGenerationalDistance()
-				.includeHypervolume()
-				.showStatisticalSignificance();
-				
-
-		//run each algorithm for 50 seeds
-		for (String algorithm : algorithms) {
-			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(50));
-		}
-
-		//print the results
-		//analyzer.showAggregate();
-		analyzer.printAnalysis();
-		analyzer.showAll();
-		//analyzer.showStatisticalSignificance();
-		// print the runtime dynamics
-		/*
-		Accumulator accumulator = instrumenter.getLastAccumulator();
-				System.out.format("  NFE    Time      Generational Distance%n");
-				
-				for (int i=0; i<accumulator.size("NFE"); i++) {
-					System.out.format("%5d    %-8.4f  %-8.4f%n",
-							accumulator.get("NFE", i),
-							accumulator.get("Elapsed Time", i),
-							accumulator.get("GenerationalDistance", i));
-				}
-		*/		
-				
-	}
+	
 	public static void GenerationalDistance(String file, List<String> Problems, String[] algorithms)throws IOException{
-		String File = file + "GenerationalDistance";//
+		String directory = "GenerationalDistance";
+		String File = file + directory;//
+		File fileDir = new File(File);
+		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Generational Distance";
 		File fileTex = new File(texFile);
@@ -143,6 +101,7 @@ public class Example2 {
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
 	public static void testGenerationalDistance(String File, String problem, String[] algorithms) throws IOException{		
+		String directory = "GenerationalDistance";
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -156,18 +115,21 @@ public class Example2 {
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(50));
+					executor.withAlgorithm(algorithm).runSeeds(directory,25));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
-		GeneratorLatexTable.storeData(analyzer, File, problem);
+		GeneratorLatexTable.storeData(analyzer, File, problem, algorithms);
 		analyzer.showStatisticalSignificance();
 	}
 	
 	public static void Hypervolume(String file, List<String> Problems, String[] algorithms)throws IOException{
-		String File = file + "Hypervolume";//
+		String directory = "Hypervolume";
+		String File = file + directory;//
+		File fileDir = new File(File);
+		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Hyper volume";
 		File fileTex = new File(texFile);
@@ -183,6 +145,7 @@ public class Example2 {
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
 	public static void testHypervolume(String File, String problem, String[] algorithms){
+		String directory = "Hypervolume";
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -197,14 +160,15 @@ public class Example2 {
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(5));
+					executor.withAlgorithm(algorithm).runSeeds(directory,25));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
+		System.out.println("Preprare printing analyzer");
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem);
+			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -212,7 +176,10 @@ public class Example2 {
 		analyzer.showStatisticalSignificance();
 	}
 	public static void InvertedGenerationalDistance(String file, List<String> Problems, String[] algorithms)throws IOException{
-		String File = file + "InvertedGenerationalDistance";//
+		String directory = "InvertedGenerationalDistance";
+		String File = file + directory;//
+		File fileDir = new File(File);
+		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Inverted Generational Distance";
 		File fileTex = new File(texFile);
@@ -228,6 +195,7 @@ public class Example2 {
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
 	public static void testInvertedGenerationalDistance(String File, String problem, String[] algorithms){
+		String directory = "InvertedGenerationalDistance";
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -241,14 +209,14 @@ public class Example2 {
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(50));
+					executor.withAlgorithm(algorithm).runSeeds(directory,25));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem);
+			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -256,7 +224,10 @@ public class Example2 {
 		analyzer.showStatisticalSignificance();
 	}
 	public static void MaximumParetoFrontError(String file, List<String> Problems, String[] algorithms)throws IOException{
-		String File = file + "MaximumParetoFrontError";//
+		String directory = "MaximumParetoFrontError";
+		String File = file + directory;//
+		File fileDir = new File(File);
+		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Maximum Pareto Front Error";
 		File fileTex = new File(texFile);
@@ -272,6 +243,7 @@ public class Example2 {
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
 	public static void testMaximumParetoFrontError(String File, String problem, String[] algorithms){
+		String directory = "MaximumParetoFrontError";
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -285,14 +257,14 @@ public class Example2 {
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(50));
+					executor.withAlgorithm(algorithm).runSeeds(directory,25));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem);
+			GeneratorLatexTable.storeData(analyzer, File, problem, algorithms);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -300,7 +272,10 @@ public class Example2 {
 		analyzer.showStatisticalSignificance();
 	}
 	public static void Contribution(String file, List<String> Problems, String[] algorithms)throws IOException{
-		String File = file + "Contribution";//
+		String directory = "Contribution";
+		String File = file + directory;//
+		File fileDir = new File(File);
+		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Contribution";
 		File fileTex = new File(texFile);
@@ -316,6 +291,7 @@ public class Example2 {
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
 	public static void testContribution(String File, String problem, String[] algorithms){
+		String directory = "Contribution";
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -329,14 +305,14 @@ public class Example2 {
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(50));
+					executor.withAlgorithm(algorithm).runSeeds(directory ,25));
 		}
 
 		//print the results
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem);
+			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

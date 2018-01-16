@@ -705,8 +705,9 @@ public class Executor extends ProblemBuilder {
 	 * @param numberOfSeeds the number of seeds to run
 	 * @return the individual end-of-run approximation sets
 	 */
-	public List<NondominatedPopulation> runSeeds(int numberOfSeeds) {
-		String dataDirectory = ReadFile.readhome("HOME_jMetalData");
+	public List<NondominatedPopulation> runSeeds(String directory, int numberOfSeeds) {
+		System.out.println("Say hello from:"+algorithmName+"and"+problemName);
+		String dataDirectory = ReadFile.readhome("HOME_jMetalData")+"/MOEA"+"/"+directory;
 		String file = dataDirectory + "/" + algorithmName + "_" + problemName + ".csv";
 		isCanceled.set(false);
 		

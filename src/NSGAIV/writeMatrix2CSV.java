@@ -98,7 +98,7 @@ public class writeMatrix2CSV {
         			 "\\begin{tabular}{llll}\n" + 
         			 "\\hline ";
         for (int i=0; i<algorithms.length;i++){
-        	add = add + " & " + algorithms[i];
+        	add = add + " & " + algorithms[i].replaceAll("V", "IV");
         }
         add = add + "\\\\";
         add = add + "\n" + "\\hline"+"\n";
