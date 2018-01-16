@@ -29,6 +29,7 @@ import org.moeaframework.analysis.collector.Accumulator;
 import NSGAIV.GeneratorLatexTable;
 import NSGAIV.ReadFile;
 import NSGAIV.writeMatrix2CSV;
+import NSGAV.utilsCSVtoLatex;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -64,14 +65,20 @@ public class Example2 {
 		//String[] DTLZ = DTLZ_8;
 		Problems = addToString(Problems,UF);
 		Problems = addToString(Problems,ZDT);
-		Problems = addToString(Problems,DTLZ_3);
+		Problems = addToString(Problems,DTLZ_8);
 		//Problems = addToString(Problems,DTLZ_8);
 		String[] algorithms = {"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
+		String [] fileNames = new String [4];
+		fileNames[0] = "Generational Distance";
+		fileNames[1] = "Hyper volume";
+		fileNames[2] = "Inverted Generational Distance";
+		fileNames[3] = "Maximum Pareto Front Error";
 		//GenerationalDistance(File, Problems, algorithms);
 		//Hypervolume(File, Problems, algorithms);
-		InvertedGenerationalDistance(File, Problems, algorithms);
+		//InvertedGenerationalDistance(File, Problems, algorithms);
 		//MaximumParetoFrontError(File, Problems, algorithms);
 		//Contribution(File, Problems, algorithms);
+		utilsCSVtoLatex.convertCSVtoLatex(fileNames, algorithms);
 	}
 	
 	public static List<String> addToString (List<String> Problems, String[] problems){

@@ -115,7 +115,7 @@ public class writeMatrix2CSV {
             Files.createFile(filePath);
             }
         String add = "";     
-        if (problem.toLowerCase().contains("dtlz")){
+        if (problem.toLowerCase().contains("_")){
         	String tempString = problem.substring(problem.indexOf("_"));
         	tempString = problem.replace(tempString, "");
         	add = add + tempString +" & ";
