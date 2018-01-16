@@ -62,11 +62,11 @@ public class utilsCSVtoLatex{
     	            while (lnr.readLine() != null){
     	        	linenumber++;
     	            }
-    	        System.out.println("Total number of lines : " + linenumber);
     	        lnr.close();
-    	        for (int j = 1; j<linenumber;j++){
+    	        for (int j = 0; j<linenumber;j++){
     	        		line = Files.readAllLines(Paths.get(fileCSV)).get(j);
     	        		String[] numbers = line.split(",");
+    	        		System.out.println(Double.parseDouble(numbers[numbers.length-1])+"\n");
     	        		average = average + Double.parseDouble(numbers[numbers.length-1])/linenumber;
     	        }
     			}else{

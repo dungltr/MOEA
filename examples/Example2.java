@@ -64,29 +64,25 @@ public class Example2 {
 		String[] DTLZ_3 = {"DTLZ1_3","DTLZ2_3","DTLZ3_3"};
 		String[] DTLZ_8 = {"DTLZ1_8","DTLZ2_8","DTLZ3_8"};
 		//String[] DTLZ = DTLZ_8;
-		Problems = addToString(Problems,UF);
+		//Problems = addToString(Problems,UF);
 		//Problems = addToString(Problems,ZDT);
-		//Problems = addToString(Problems,DTLZ_8);
+		Problems = addToString(Problems,DTLZ_8);
 		//Problems = addToString(Problems,DTLZ_8);
 		String[] algorithms = {"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
 		String [] fileNames = new String [4];
 		fileNames[0] = "Generational Distance";
 		fileNames[1] = "Hyper volume";
 		fileNames[2] = "Inverted Generational Distance";
-		fileNames[3] = "Maximum Pareto Front Error";
-		GenerationalDistance(File, Problems, algorithms);
-		String fileCSV = File + fileNames[0].replaceAll(" ", "");
-		double [][] average = new double[Problems.size()][algorithms.length];
-		for(int i = 0; i<average.length;i++) {
-			for(int j = 0; j<average[0].length; j++) {
-				average[i][j] = utilsCSVtoLatex.averageTime(fileCSV,Problems.get(i), algorithms[j]);
-			}
-		}
-		ReadMatrixCSV.printMatrix(average);
-		
-		//Hypervolume(File, Problems, algorithms);
-		//InvertedGenerationalDistance(File, Problems, algorithms);
-		//MaximumParetoFrontError(File, Problems, algorithms);
+		fileNames[3] = "Maximum Pareto Front Error";		
+		//GenerationalDistance(File, Problems, algorithms);
+		//GeneratorLatexTable.GeneratorComputeTimeToLatex(fileNames[0], Problems, algorithms);		
+		Hypervolume(File, Problems, algorithms);
+		/*GeneratorLatexTable.GeneratorComputeTimeToLatex(fileNames[1], Problems, algorithms);
+		InvertedGenerationalDistance(File, Problems, algorithms);
+		GeneratorLatexTable.GeneratorComputeTimeToLatex(fileNames[2], Problems, algorithms);
+		MaximumParetoFrontError(File, Problems, algorithms);
+		GeneratorLatexTable.GeneratorComputeTimeToLatex(fileNames[3], Problems, algorithms);
+		*/
 		//Contribution(File, Problems, algorithms);
 		//utilsCSVtoLatex.convertCSVtoLatex(fileNames, algorithms);
 	}
