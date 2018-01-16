@@ -49,4 +49,32 @@ public class utilsCSVtoLatex{
 	    	}
 		}			
 	}
+	public static double averageTime(String file, String problem, String algorithms) {
+		String fileCSV = file + "/" + algorithms + "_" + problem + ".csv";
+		double average = 0;
+		File filePath = new File(fileCSV);
+		String line;
+		try{
+			if(filePath.exists()){
+    		    FileReader fr = new FileReader(filePath);
+    		    LineNumberReader lnr = new LineNumberReader(fr);
+    		    int linenumber = 0;
+    	            while (lnr.readLine() != null){
+    	        	linenumber++;
+    	            }
+    	        System.out.println("Total number of lines : " + linenumber);
+    	        lnr.close();
+    	        for (int j = 1; j<linenumber;j++){
+    	        		line = Files.readAllLines(Paths.get(fileCSV)).get(j);
+    	        		String[] numbers = line.split(",");
+    	        		average = average + Double.parseDouble(numbers[numbers.length-1])/linenumber;
+    	        }
+    			}else{
+    			 System.out.println("File does not exists!");
+    			}
+		}catch(IOException e){
+    			e.printStackTrace();
+		}
+		return average;		
+	}
 }
