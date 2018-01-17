@@ -881,7 +881,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		*/
 		//int N = previousFront.size()+currentFront.size();
 			 
-		double epsilon = 0.01;
+		double epsilon = 0.001;
 		int k=0;
 		int k_Max = 1000;
 		//int S=0;

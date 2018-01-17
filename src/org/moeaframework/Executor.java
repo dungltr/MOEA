@@ -748,6 +748,29 @@ public class Executor extends ProblemBuilder {
 		progress.stop();
 		return results;
 	}
+	public List<NondominatedPopulation> runSeeds(int numberOfSeeds) {
+		isCanceled.set(false);
+		if ((checkpointFile != null) && (numberOfSeeds > 1)) {
+			System.err.println(
+					"checkpoints not supported when running multiple seeds");
+			checkpointFile = null;
+		}		
+		int maxEvaluations = properties.getInt("maxEvaluations", -1);
+		long maxTime = properties.getLong("maxTime", -1);
+		List<NondominatedPopulation> results =
+				new ArrayList<NondominatedPopulation>();		
+		progress.start(numberOfSeeds, maxEvaluations, maxTime);	
+		for (int i = 0; i < numberOfSeeds && !isCanceled.get(); i++) {		
+			NondominatedPopulation result = runSingleSeed(i+1, numberOfSeeds,
+					createTerminationCondition());	
+			if (result != null) {
+				results.add(result);
+				progress.nextSeed();
+			}				
+		}
+		progress.stop();
+		return results;
+	}
 	
 	/**
 	 * Runs this executor with its configured settings.

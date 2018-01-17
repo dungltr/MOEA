@@ -136,7 +136,6 @@ public class NSGAV extends AbstractEvolutionaryAlgorithm implements
 			while (offspring.size() < populationSize) {
 				Solution[] parents = selection.select(variation.getArity(),
 						population);
-
 				offspring.addAll(variation.evolve(parents));
 			}
 		}

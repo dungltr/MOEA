@@ -55,7 +55,7 @@ public class Example2 {
 
 	public static void main(String[] args) throws IOException {
 		List<String> Problems = new ArrayList<>();
-		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_CrowDistance";
+		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_CrowDistance2_DTLZ_3";
 		//String texFile = File + ".tex";
 		//String[] problems = {"UF1","UF2","UF3","DTLZ1.8D","DTLZ2.8D","DTLZ3.8D"};
 		String[] UF = {"UF1","UF2","UF3"};
@@ -68,8 +68,8 @@ public class Example2 {
 		//String[] DTLZ = DTLZ_8;
 		Problems = addToString(Problems,UF);
 		Problems = addToString(Problems,ZDT);
-		//Problems = addToString(Problems,DTLZ_3);
-		Problems = addToString(Problems,DTLZ_8);
+		Problems = addToString(Problems,DTLZ_3);
+		//Problems = addToString(Problems,DTLZ_8);
 		String[] algorithms = {"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
 		String [] fileNames = new String [4];
 		fileNames[0] = "Generational Distance";
@@ -124,7 +124,7 @@ public class Example2 {
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
-				.withMaxEvaluations(10000);
+				.withMaxEvaluations(25000);
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
 				//.saveAnalysis(filePath)
@@ -168,7 +168,7 @@ public class Example2 {
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
-				.withMaxEvaluations(10000);
+				.withMaxEvaluations(25000);
 
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
@@ -218,7 +218,7 @@ public class Example2 {
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
-				.withMaxEvaluations(10000);
+				.withMaxEvaluations(25000);
 
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
@@ -266,7 +266,7 @@ public class Example2 {
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
-				.withMaxEvaluations(10000);
+				.withMaxEvaluations(25000);
 
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
@@ -314,7 +314,7 @@ public class Example2 {
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
-				.withMaxEvaluations(10000);
+				.withMaxEvaluations(25000);
 
 		Analyzer analyzer = new Analyzer()
 				.withProblem(problem)
