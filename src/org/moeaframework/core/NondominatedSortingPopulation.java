@@ -55,7 +55,7 @@ public class NondominatedSortingPopulation extends Population {
 	/**
 	 * The fast non-dominated sorting implementation.
 	 */
-	private final NondominatedSorting nondominatedSorting;
+	protected final NondominatedSorting nondominatedSorting;
 
 	/**
 	 * Constructs an empty population that maintains the {@code rank} and

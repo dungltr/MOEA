@@ -55,7 +55,7 @@ public class Example2 {
 
 	public static void main(String[] args) throws IOException {
 		List<String> Problems = new ArrayList<>();
-		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA1";
+		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_CrowDistance";
 		//String texFile = File + ".tex";
 		//String[] problems = {"UF1","UF2","UF3","DTLZ1.8D","DTLZ2.8D","DTLZ3.8D"};
 		String[] UF = {"UF1","UF2","UF3"};
@@ -69,7 +69,7 @@ public class Example2 {
 		Problems = addToString(Problems,UF);
 		Problems = addToString(Problems,ZDT);
 		//Problems = addToString(Problems,DTLZ_3);
-		Problems = addToString(Problems,DTLZ_6);
+		Problems = addToString(Problems,DTLZ_8);
 		String[] algorithms = {"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
 		String [] fileNames = new String [4];
 		fileNames[0] = "Generational Distance";

@@ -28,16 +28,8 @@ import java.util.Set;
 import java.util.Comparator;
 import java.io.Serializable;
 
-
-
-
-import org.moeaframework.core.FrameworkException;
-import org.moeaframework.core.NondominatedSortingPopulation;
-import org.moeaframework.core.PRNG;
-import org.moeaframework.core.Population;
-import org.moeaframework.core.Settings;
-import org.moeaframework.core.Solution;
 import org.moeaframework.core.*;
+import org.moeaframework.core.comparator.CrowdingComparator;
 import org.moeaframework.core.comparator.DominanceComparator;
 import org.moeaframework.core.comparator.RankComparator;
 import org.moeaframework.util.Vector;
@@ -112,11 +104,11 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 
 	private static DominanceComparator comparator;
 
-	private static DominanceComparator comparator2;
+	//private static DominanceComparator comparator2;
 
 	private static Population resultFilter;
 
-	private static DominanceComparator comparator3;
+	//private static DominanceComparator comparator3;
 	/**
 	 * Constructs an empty population that maintains the {@code rank}
 	 * attribute for its solutions.
@@ -131,6 +123,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		this.divisionsInner = 0;
 		initialize();
 	}
+	
 	/**
 	 * Constructs an empty population that maintains the {@code rank}
 	 * attribute for its solutions.
@@ -912,9 +905,17 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		}
 		else{
 			//System.out.println("Stop at here if(previousFront.size()<=0)");
+			/*
 			while(currentFront.size()>newSize){
 				currentFront.remove(findMaxSolution (currentFront));
+			}*/
+			while (currentFront.size()>newSize) {
+				NondominatedSorting nondominatedSorting = new NondominatedSorting(comparator);
+				nondominatedSorting.updateCrowdingDistance(currentFront);
+				currentFront.truncate(currentFront.size()-1, new CrowdingComparator());
+				//System.out.println("The system test with CrowDistance algorithms");
 			}
+				
 			//System.out.println("no need to truncated-----------------------------------");
 			return currentFront;
 		}	
@@ -986,14 +987,24 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 						temp.get(i).setObjective(j, Store.get(i)[j]);//;setObjectives(Store.get(m));
 					}
 				}
+				//Back up the resultFilter with StoreIndex
 				for(int i=0; i<storeIndex.size();i++){
 					resultFilter.add(currentFront.get(storeIndex.get(i)));
 				}
 				//if (storeIndex.size()==newSize){System.out.println("After reduce Deltas at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);}
 				if (storeIndex.size()>newSize){ //System.out.println("Stop at here if (storeIndex.size()>newSize)");
+					/*
 					while(resultFilter.size()>newSize){
 						resultFilter.remove(findMaxSolution (resultFilter));
 					}
+					*/
+					while (resultFilter.size()>newSize) {
+						NondominatedSorting nondominatedSorting = new NondominatedSorting(comparator);
+						nondominatedSorting.updateCrowdingDistance(resultFilter);
+						resultFilter.truncate(resultFilter.size()-1, new CrowdingComparator());
+						//System.out.println("The system test with CrowDistance algorithms with resultFilter.size():"+ resultFilter.size() + ">newSize:"+newSize);
+					}
+					
 					//System.out.println("After reduce Deltas at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
 //					currentFront.clear();
 //					currentFront.addAll(resultFilter);
@@ -1075,6 +1086,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			for (Solution solution : resultFilter){
 				add(solution);
 			}	
+			//System.out.println("The solution more is:="+size+"-"+size()+"="+N);
 			/*
 			System.out.println("\nThe previous Population is:*************************************");
 			NSGAIV.utilsPopulation.printPopulation(previousFront);
