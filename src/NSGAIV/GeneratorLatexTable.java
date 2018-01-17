@@ -41,9 +41,9 @@ public class GeneratorLatexTable{
 		writeMatrix2CSV.addArray2Csv(medianFile, Median);
 		writeMatrix2CSV.addArray2tex(texFile, Median, problem);
 	}
-	public static void GeneratorComputeTimeToLatex(String caption, List<String> Problems, String[] algorithms) {
+	public static void GeneratorComputeTimeToLatex(String homeFile, String caption, List<String> Problems, String[] algorithms) {
 		String directory = caption.replace(" ", "");
-		String fileCSV = ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA"+"/"+ directory;
+		String fileCSV = homeFile +"/"+ directory;
 		String File = fileCSV + "ComputeTime";//
 		
 		//File fileDir = new File(File);

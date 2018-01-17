@@ -707,7 +707,7 @@ public class Executor extends ProblemBuilder {
 	 */
 	public List<NondominatedPopulation> runSeeds(String directory, int numberOfSeeds) {
 		System.out.println("Say hello from:"+algorithmName+"and"+problemName);
-		String dataDirectory = ReadFile.readhome("HOME_jMetalData")+"/MOEA"+"/"+directory;
+		String dataDirectory = directory;
 		String file = dataDirectory + "/" + algorithmName + "_" + problemName + ".csv";
 		isCanceled.set(false);
 		
