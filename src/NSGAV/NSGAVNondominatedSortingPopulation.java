@@ -76,10 +76,10 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 		
 		if (!Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new NSGAVFastNondominatedSorting(comparator);
-			System.out.println("Using FastNondominatedSorting");
+			//System.out.println("Using FastNondominatedSorting");
 		} else {
 			nondominatedSorting = new NSGAVNondominatedSorting(comparator);
-			System.out.println("Using OriginNondominatedSorting");
+			//System.out.println("Using OriginNondominatedSorting");
 		}
 	}
 
@@ -197,7 +197,7 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 			update();
 		}
 		sort(new RankComparator());
-		System.out.println("From NSGAIVNondoinatedSortingPopulation.prune");
+		//System.out.println("From NSGAIVNondoinatedSortingPopulation.prune");
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
@@ -220,7 +220,7 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 		//prune front until correct size
 		while (size() + front.size() > size) {
 			nondominatedSorting.updateCrowdingDistance(front);
-			System.out.println("Before truncate");
+			//System.out.println("Before truncate");
 			front.truncate(front.size()-1, new CrowdingComparator());
 			
 		}

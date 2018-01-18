@@ -90,12 +90,24 @@ public class writeMatrix2CSV {
         if (!Files.exists(filePath)) {
             Files.createFile(filePath);
             }
+        String column = "l";
+        for (int i=0; i< algorithms.length; i++) {
+        		column = column + "l";
+        }
+        String line = "";
+        /*
+        for (int i = 0; i< algorithms.length; i++){
+			line = Files.readAllLines(Paths.get(reportFile)).get(3+i*7);
+			line = line.substring(line.indexOf(":")).replaceAll(": ", "");
+			Median[i] = Double.parseDouble(line);
+		}
+		*/
         String add = "\\begin{table}\n"+
         			 "\\caption{"+Caption+"}\n"+
         			 "\\label{table: GD}\n"+
         			 "\\centering\n"+
         			 "\\begin{scriptsize}\n"+
-        			 "\\begin{tabular}{llll}\n" + 
+        			 "\\begin{tabular}{"+column+"}\n" + 
         			 "\\hline ";
         for (int i=0; i<algorithms.length;i++){
         	add = add + " & " + algorithms[i].replaceAll("V", "IV");

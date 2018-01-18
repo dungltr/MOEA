@@ -19,6 +19,7 @@ public class utilsCSVtoLatex{
 			File filePath = new File (file);
 			String problem = "";
 			String line;
+			File listFile = new File(home);
 			try{
 				if(filePath.exists()){
 					writeMatrix2CSV.addHeader2tex(Caption, fileName, algorithms);

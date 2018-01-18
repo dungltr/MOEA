@@ -65,7 +65,7 @@ import org.moeaframework.util.weights.NormalBoundaryIntersectionGenerator;
  *   <li><a href="http://web.ntnu.edu.tw/~tcchiang/publications/nsga3cpp/nsga3cpp.htm">C++ Implementation by Tsung-Che Chiang</a>
  * </ol>
  */
-public class NSGAVReferencePointNondominatedSortingPopulation extends NondominatedSortingPopulation {
+public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondominatedSortingPopulation {
 
 	/**
 	 * The name of the attribute for storing the normalized objectives.
@@ -283,12 +283,13 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 * Initializes the ideal point and reference points (weights).
 	 */
 	private void initialize() {
+		/*
 		idealPoint = new double[numberOfObjectives];
 		Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
 		//System.out.println("Say hello from initialize() in NSGAV");
 		weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
 				divisionsOuter, divisionsInner).generate();
-		
+		*/
 		//for (int j=0;j<weights.size();j++)
 		//System.out.println(weights.get(j));
 		//NSGAIV.matrixPrint.printArray(weights.);
@@ -1029,10 +1030,15 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 */
 	@Override
 	public void truncate(int size, Comparator<? super Solution> comparator) {
+		//System.out.println("Hello from truncate in NSGAV and NSGAVReferencePoint");
 		if (size() > size) {
 			// remove all solutions past the last front
+			//nondominatedSorting = new FastNondominatedSorting(comparator);
+			Settings.useFastNondominatedSorting();
 			sort(new RankComparator());
-
+			
+			//new FastNondominatedSorting().evaluate(population);
+			
 			int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
 			Population front = new Population();
 			Population previousFront = new Population();// Dung edit

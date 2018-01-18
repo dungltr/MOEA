@@ -55,6 +55,7 @@ public class NondominatedSortingPopulation extends Population {
 	/**
 	 * The fast non-dominated sorting implementation.
 	 */
+	//protected final FastNondominatedSorting fastnondominatedSorting;
 	protected final NondominatedSorting nondominatedSorting;
 
 	/**
@@ -83,7 +84,20 @@ public class NondominatedSortingPopulation extends Population {
 			//System.out.println("Using Original NondominatedSorting");
 		}
 	}
-
+	/*
+	public FastNondominatedSortingPopulation(DominanceComparator comparator) {
+		super();
+		modified = false; //old is false
+		
+		if (Settings.useFastNondominatedSorting()) {
+			nondominatedSorting = new FastNondominatedSorting(comparator);
+			//System.out.println("Using FastNondominatedSorting");
+		} else {
+			nondominatedSorting = new NondominatedSorting(comparator);
+			//System.out.println("Using Original NondominatedSorting");
+		}
+	}
+	*/
 	/**
 	 * Constructs a population initialized with the specified solutions that 
 	 * maintains the {@code rank} and {@code crowdingDistance} attributes for 

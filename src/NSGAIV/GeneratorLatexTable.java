@@ -9,7 +9,7 @@ import org.moeaframework.Analyzer;
 
 import NSGAV.utilsCSVtoLatex;
 public class GeneratorLatexTable{
-	public static void storeData(Analyzer analyzer, String File, String problem, String [] algorithms) throws IOException{
+	public static void storeData(Analyzer analyzer, String File, String problem, String [] algorithms, String Caption) throws IOException{
 		String texFile = File+ ".tex";
 		String dirProblem = File + "/" + problem;
 		File fileProblem = new File(dirProblem);
@@ -22,8 +22,25 @@ public class GeneratorLatexTable{
 		analyzer.saveData(filePath,"","_"+problem+".txt");
 		if (!fileAnalysis.exists()) fileAnalysis.createNewFile();
 		analyzer.saveAnalysis(fileAnalysis);
-		double [] Median = new double[algorithms.length];
+		
+		//String Caption = "Generational Distance";
+		String [] titleAlgorithms = new String[algorithms.length];
 		String line = "";
+		for (int i = 0; i< algorithms.length; i++){
+			line = Files.readAllLines(Paths.get(reportFile)).get(0+i*7);
+			line = line.replaceAll(":", "");
+			titleAlgorithms[i] = line;
+		}
+		File fileTex = new File(texFile);
+		if (!fileTex.exists()){
+			fileTex.createNewFile();
+			writeMatrix2CSV.addHeader2tex(Caption, texFile, titleAlgorithms);
+		}
+		
+		
+		
+		double [] Median = new double[algorithms.length];
+		line = "";
 		for (int i = 0; i< Median.length; i++){
 			line = Files.readAllLines(Paths.get(reportFile)).get(3+i*7);
 			line = line.substring(line.indexOf(":")).replaceAll(": ", "");

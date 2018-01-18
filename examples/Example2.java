@@ -55,9 +55,28 @@ public class Example2 {
 
 	public static void main(String[] args) throws IOException {
 		List<String> Problems = new ArrayList<>();
-		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_CrowDistance2_DTLZ_3";
+		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_all_UF_ZDT";
 		//String texFile = File + ".tex";
 		//String[] problems = {"UF1","UF2","UF3","DTLZ1.8D","DTLZ2.8D","DTLZ3.8D"};
+		String [] allAlgorithms = { "NSGAII", "NSGAIII", "NSGAV"};//, "eMOEA", "eNSGAII", "GDE3"};//, 
+				//"MOEAD", "MSOPS", "CMA-ES", "SPEA2", "PAES", "PESA2", "OMOPSO",
+				//"SMPSO", "IBEA", "SMS-EMOA", "VEGA", "DBEA", "Random", "RVEA",
+				//"RSO" };
+		// CMA-ES,"SMS-EMOA" use fastNondominatedSorting.java
+		String[] allProblems = { 
+			"DTLZ1_2", "DTLZ2_2", "DTLZ3_2", "DTLZ4_2", "DTLZ7_2", 
+			"ROT_DTLZ1_2", "ROT_DTLZ2_2", "ROT_DTLZ3_2", "ROT_DTLZ4_2", "ROT_DTLZ7_2", 
+			"UF1", "UF2", "UF3", "UF4", "UF5", "UF6", "UF7", "UF8", "UF9", "UF10", "UF11", "UF12", "UF13",
+			"CF1", "CF2", "CF3", "CF4", "CF5", "CF6", "CF7", "CF8", "CF9", "CF10",
+			"LZ1", "LZ2", "LZ3", "LZ4", "LZ5", "LZ6", "LZ7", "LZ8", "LZ9",
+			"WFG1_2", "WFG2_2", "WFG3_2", "WFG4_2", "WFG5_2", "WFG6_2", "WFG7_2", "WFG8_2", "WFG9_2",
+			"ZDT1", "ZDT2", "ZDT3", "ZDT4", "ZDT5", "ZDT6",
+			"Belegundu", "Binh", "Binh2", "Binh3", "Binh4", "Fonseca", 
+			"Fonseca2", "Jimenez", "Kita", "Kursawe", "Laumanns", "Lis", 
+			"Murata", "Obayashi", "OKA1", "OKA2", "Osyczka", "Osyczka2", 
+			"Poloni", "Quagliarella", "Rendon", "Rendon2", "Schaffer", 
+			"Schaffer2", "Srinivas", "Tamaki", "Tanaka", "Viennet", 
+			"Viennet2", "Viennet3", "Viennet4"};
 		String[] UF = {"UF1","UF2","UF3"};
 		String[] ZDT = {"ZDT1","ZDT2","ZDT3"};
 		String[] DTLZ_2 = {"DTLZ1_2","DTLZ2_2","DTLZ3_2"};
@@ -68,9 +87,9 @@ public class Example2 {
 		//String[] DTLZ = DTLZ_8;
 		Problems = addToString(Problems,UF);
 		Problems = addToString(Problems,ZDT);
-		Problems = addToString(Problems,DTLZ_3);
+		//Problems = addToString(Problems,DTLZ_3);
 		//Problems = addToString(Problems,DTLZ_8);
-		String[] algorithms = {"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
+		String[] algorithms = allAlgorithms;//{"eMOEA", "NSGAII","NSGAIII", "NSGAV", "GDE3"};//, "GDE3", "eMOEA" };
 		String [] fileNames = new String [4];
 		fileNames[0] = "Generational Distance";
 		fileNames[1] = "Hyper volume";
@@ -79,7 +98,7 @@ public class Example2 {
 		
 		GenerationalDistance(homeFile, Problems, algorithms);
 		GeneratorLatexTable.GeneratorComputeTimeToLatex(homeFile,fileNames[0], Problems, algorithms);
-		
+		/*
 		Hypervolume(homeFile, Problems, algorithms);
 		GeneratorLatexTable.GeneratorComputeTimeToLatex(homeFile,fileNames[1], Problems, algorithms);
 		
@@ -88,7 +107,7 @@ public class Example2 {
 		
 		MaximumParetoFrontError(homeFile, Problems, algorithms);
 		GeneratorLatexTable.GeneratorComputeTimeToLatex(homeFile,fileNames[3], Problems, algorithms);
-		
+		*/
 		//Contribution(File, Problems, algorithms);
 		//utilsCSVtoLatex.convertCSVtoLatex(fileNames, algorithms);
 	}
@@ -103,24 +122,27 @@ public class Example2 {
 	public static void GenerationalDistance(String homeFile, List<String> Problems, String[] algorithms)throws IOException{
 		String directory = "GenerationalDistance";
 		String File = homeFile + "/"+ directory;//
+		
 		File fileDir = new File(File);
 		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
+		
 		String Caption = "Generational Distance";
+		/*
 		File fileTex = new File(texFile);
 		if (!fileTex.exists()){
 			fileTex.createNewFile();
-			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
+			writeMatrix2CSV.addHeader2tex(Caption, texFile, algorithms);
 		}
-		
+		*/
 		for (int i = 0; i<Problems.size(); i++){
 			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testGenerationalDistance(File, Problems.get(i),algorithms);
+			testGenerationalDistance(File, Problems.get(i),algorithms, Caption);
 		}
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
-	public static void testGenerationalDistance(String File, String problem, String[] algorithms) throws IOException{		
-		String directory = "GenerationalDistance";
+	public static void testGenerationalDistance(String File, String problem, String[] algorithms, String Caption) throws IOException{			
+		String directory = Caption.replace(" ", "");
 		//setup the experiment
 		Executor executor = new Executor()
 				.withProblem(problem)
@@ -139,8 +161,8 @@ public class Example2 {
 
 		//print the results
 		//analyzer.showAggregate();
-		analyzer.printAnalysis();
-		GeneratorLatexTable.storeData(analyzer, File, problem, algorithms);
+		analyzer.printAnalysis();	
+		GeneratorLatexTable.storeData(analyzer, File, problem, algorithms, Caption);
 		analyzer.showStatisticalSignificance();
 	}
 	
@@ -151,19 +173,20 @@ public class Example2 {
 		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Hyper volume";
+		/*
 		File fileTex = new File(texFile);
 		if (!fileTex.exists()){
 			fileTex.createNewFile();
 			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
 		}
-		
+		*/
 		for (int i = 0; i<Problems.size(); i++){
 			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testHypervolume(File, Problems.get(i),algorithms);
+			testHypervolume(File, Problems.get(i),algorithms, Caption);
 		}
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
-	public static void testHypervolume(String File, String problem, String[] algorithms){
+	public static void testHypervolume(String File, String problem, String[] algorithms, String Caption){
 		//String directory = "Hypervolume";
 		//setup the experiment
 		Executor executor = new Executor()
@@ -187,7 +210,7 @@ public class Example2 {
 		System.out.println("Preprare printing analyzer");
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms);
+			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms, Caption);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -201,19 +224,20 @@ public class Example2 {
 		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Inverted Generational Distance";
+		/*
 		File fileTex = new File(texFile);
 		if (!fileTex.exists()){
 			fileTex.createNewFile();
 			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
 		}
-		
+		*/
 		for (int i = 0; i<Problems.size(); i++){
 			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testInvertedGenerationalDistance(File, Problems.get(i),algorithms);
+			testInvertedGenerationalDistance(File, Problems.get(i),algorithms, Caption);
 		}
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
-	public static void testInvertedGenerationalDistance(String File, String problem, String[] algorithms){
+	public static void testInvertedGenerationalDistance(String File, String problem, String[] algorithms, String Caption){
 		//String directory = "InvertedGenerationalDistance";
 		//setup the experiment
 		Executor executor = new Executor()
@@ -235,7 +259,7 @@ public class Example2 {
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms);
+			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms, Caption);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -249,19 +273,20 @@ public class Example2 {
 		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Maximum Pareto Front Error";
+		/*
 		File fileTex = new File(texFile);
 		if (!fileTex.exists()){
 			fileTex.createNewFile();
 			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
 		}
-		
+		*/
 		for (int i = 0; i<Problems.size(); i++){
 			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testMaximumParetoFrontError(File, Problems.get(i),algorithms);
+			testMaximumParetoFrontError(File, Problems.get(i),algorithms, Caption);
 		}
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
-	public static void testMaximumParetoFrontError(String File, String problem, String[] algorithms){
+	public static void testMaximumParetoFrontError(String File, String problem, String[] algorithms, String Caption){
 		//String directory = "MaximumParetoFrontError";
 		//setup the experiment
 		Executor executor = new Executor()
@@ -283,7 +308,7 @@ public class Example2 {
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem, algorithms);
+			GeneratorLatexTable.storeData(analyzer, File, problem, algorithms, Caption);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -297,19 +322,19 @@ public class Example2 {
 		if (!fileDir.exists()) fileDir.mkdirs();
 		String texFile = File + ".tex";
 		String Caption = "Contribution";
-		File fileTex = new File(texFile);
+		/*File fileTex = new File(texFile);
 		if (!fileTex.exists()){
 			fileTex.createNewFile();
 			writeMatrix2CSV.addHeader2tex(Caption, texFile,algorithms);
 		}
-		
+		*/
 		for (int i = 0; i<Problems.size(); i++){
 			System.out.println("Testing algorithms on: "+Problems.get(i));
-			testContribution(File, Problems.get(i),algorithms);
+			testContribution(File, Problems.get(i),algorithms, Caption);
 		}
 		writeMatrix2CSV.addBottom2tex(texFile,algorithms);
 	}
-	public static void testContribution(String File, String problem, String[] algorithms){
+	public static void testContribution(String File, String problem, String[] algorithms, String Caption){
 		//String directory = "Contribution";
 		//setup the experiment
 		Executor executor = new Executor()
@@ -331,7 +356,7 @@ public class Example2 {
 		//analyzer.showAggregate();
 		analyzer.printAnalysis();
 		try {
-			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms);
+			GeneratorLatexTable.storeData(analyzer, File, problem,algorithms, Caption);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -273,7 +273,7 @@ public class NSGAIVNondominatedSorting extends NondominatedSorting {
 		//////////////////
 		*/	
 		//////////////////Original Fast Non Dominated
-		
+		/*
 		int N = population.size();
 		
 		// precompute the dominance relations
@@ -344,8 +344,9 @@ public class NSGAIVNondominatedSorting extends NondominatedSorting {
 			updateCrowdingDistance(solutionsInFront);		
 			rank += 1;
 			currentFront = nextFront;
+			*/
 		///////////////////
-/*		List<Solution> remaining = new ArrayList<Solution>();
+		List<Solution> remaining = new ArrayList<Solution>();
 
 		for (Solution solution : population) {
 			remaining.add(solution);
@@ -356,30 +357,16 @@ public class NSGAIVNondominatedSorting extends NondominatedSorting {
 		while (!remaining.isEmpty()) {
 			NondominatedPopulation front = new NondominatedPopulation(
 					comparator, DuplicateMode.ALLOW_DUPLICATES);
-
 			for (Solution solution : remaining) {
 				front.add(solution);
 			}
-
 			for (Solution solution : front) {
 				remaining.remove(solution);
 				solution.setAttribute(RANK_ATTRIBUTE, rank);
 			}
-
 			updateCrowdingDistance(front);
-
-			rank++;
-			//////////////////////////////////////
-			double[] MaxRank = new double [1];
-			MaxRank[0] = (double) rank; 
-			try {
-			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/NondominateSorting.csv", MaxRank);
-			} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			}
-			//////////////////////////////////////
-*/		}
+			rank++;	
+		}
 	}
 	
 	/**

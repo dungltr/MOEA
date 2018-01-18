@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.moeaframework.core.EpsilonBoxDominanceArchive;
 import org.moeaframework.core.EpsilonBoxEvolutionaryAlgorithm;
+import org.moeaframework.core.FastNondominatedSorting;
 import org.moeaframework.core.Initialization;
 import org.moeaframework.core.NondominatedSortingPopulation;
 import org.moeaframework.core.PRNG;
@@ -78,6 +79,7 @@ public class NSGAV extends AbstractEvolutionaryAlgorithm implements
 	 * @param variation the variation operator
 	 * @param initialization the initialization method
 	 */
+	
 	public NSGAV(Problem problem, NSGAVNondominatedSortingPopulation population,
 			EpsilonBoxDominanceArchive archive, Selection selection,
 			Variation variation, Initialization initialization) {
@@ -139,7 +141,7 @@ public class NSGAV extends AbstractEvolutionaryAlgorithm implements
 				offspring.addAll(variation.evolve(parents));
 			}
 		}
-
+		//new FastNondominatedSorting().evaluate(population);
 		evaluateAll(offspring);
 
 		if (archive != null) {
@@ -147,9 +149,9 @@ public class NSGAV extends AbstractEvolutionaryAlgorithm implements
 		}
 
 		population.addAll(offspring);
-		//population1.truncate(populationSize);
-		//System.out.println("After addAll");
-		population.prune(populationSize);
+		population.truncate(populationSize);
+		//System.out.println("Hello from NSGAV.java");
+		//population.prune(populationSize);
 		if (population.size() != populationSize)
 		System.out.println("-----------------finish truncate in NSGAIV.java--------------------------------population.size:="+population.size());
 	}

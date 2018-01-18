@@ -137,6 +137,8 @@ public class NSGAVProvider extends AlgorithmProvider {
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);// Create initialization
 		
+		//NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
+		//		problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
 		NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
 				problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
 		Selection selection = null;
@@ -197,8 +199,8 @@ public class NSGAVProvider extends AlgorithmProvider {
 		*/
 		Variation variation = OperatorFactory.getInstance().getVariation(null, 
 				properties, problem);// Create variation
-
-		return new NSGAII(problem, population, null, selection, variation,
+		//System.out.println("hello from NSGAV provider");
+		return new NSGAV(problem, population, null, selection, variation,
 				initialization);
 	}
 /*	private Algorithm newNSGAV(TypedProperties properties, Problem problem) {
