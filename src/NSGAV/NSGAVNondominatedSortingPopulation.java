@@ -81,7 +81,7 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 		
 		if (Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new NSGAVFastNondominatedSorting(comparator);
-			System.out.println("Using FastNondominatedSorting");
+			//System.out.println("Using FastNondominatedSorting");
 		} else {
 			nondominatedSorting = new NSGAVNondominatedSorting(comparator);
 			//System.out.println("Using Original NondominatedSorting");

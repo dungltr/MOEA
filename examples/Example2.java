@@ -56,7 +56,7 @@ public class Example2 {
 	public static void main(String[] args) throws IOException {
 		List<String> Problems = new ArrayList<>();
 		String Caption = "";
-		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_UF_ZDT_DTLZ_problems_using_findMax_4standard_NonFast";
+		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_UF_ZDT_DTLZ_problems_using_findMax_4standard_Original";
 		//String texFile = File + ".tex";
 		//String[] problems = {"UF1","UF2","UF3","DTLZ1.8D","DTLZ2.8D","DTLZ3.8D"};
 		String [] allAlgorithms = { "NSGAII", "NSGAIII", "NSGAV"};//, "eMOEA", "eNSGAII", "GDE3"};//, 
