@@ -1022,7 +1022,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			//System.out.println("The size of result is:="+S);
 			//NSGAIV.utilsPopulation.printPopulation(resultFilter);
 		}
-		System.out.println("After truncated at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
+		//System.out.println("After truncated at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
 		return resultFilter;
 	}
 	/**
