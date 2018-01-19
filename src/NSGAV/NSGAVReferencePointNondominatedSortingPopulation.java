@@ -882,9 +882,9 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 		*/
 		//int N = previousFront.size()+currentFront.size();
 			 
-		double epsilon = 0.001;
+		double epsilon = 0.01;
 		int k=0;
-		int k_Max = 1000;
+		int k_Max = 100;
 		//int S=0;
 		/*Population temp = new Population();
 		for (Solution solution: previousFront) {
@@ -1022,7 +1022,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			//System.out.println("The size of result is:="+S);
 			//NSGAIV.utilsPopulation.printPopulation(resultFilter);
 		}
-		//System.out.println("After truncated at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
+		System.out.println("After truncated at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
 		return resultFilter;
 	}
 	/**
