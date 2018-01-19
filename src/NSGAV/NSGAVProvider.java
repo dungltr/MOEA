@@ -80,7 +80,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		
 		int divisionsOuter = 4;
 		int divisionsInner = 0;
-		/*
+		
 		//System.out.println("Say hello from NSGAV provider");
 		if (properties.contains("divisionsOuter") && properties.contains("divisionsInner")) {
 			divisionsOuter = (int)properties.getDouble("divisionsOuter", 4);
@@ -129,8 +129,8 @@ public class NSGAVProvider extends AlgorithmProvider {
 			// round up to a multiple of 4
 			populationSize = (int)Math.ceil(populationSize / 4d) * 4;
 		}
-		*/
-		int populationSize = 100;
+		
+		//int populationSize = 100;
 		if (properties.contains("populationSize")) {
 			populationSize = (int)properties.getDouble("populationSize", 100);	
 		}	

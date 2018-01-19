@@ -284,10 +284,11 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 	 */
 	private void initialize() {
 		idealPoint = new double[numberOfObjectives];
-		Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
+		//Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
 		//System.out.println("Say hello from initialize() in NSGAV");
-		weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
-				divisionsOuter, divisionsInner).generate();
+		//
+		//weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
+		//		divisionsOuter, divisionsInner).generate();
 		
 		//for (int j=0;j<weights.size();j++)
 		//System.out.println(weights.get(j));
@@ -905,17 +906,18 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 		}
 		else{
 			//System.out.println("Stop at here if(previousFront.size()<=0)");
-			/*
+			
 			while(currentFront.size()>newSize){
 				currentFront.remove(findMaxSolution (currentFront));
-			}*/
+			}
+			/*
 			while (currentFront.size()>newSize) {
 				NondominatedSorting nondominatedSorting = new NondominatedSorting(comparator);
 				nondominatedSorting.updateCrowdingDistance(currentFront);
 				currentFront.truncate(currentFront.size()-1, new CrowdingComparator());
 				//System.out.println("The system test with CrowDistance algorithms");
 			}
-				
+			*/	
 			//System.out.println("no need to truncated-----------------------------------");
 			return currentFront;
 		}	
@@ -993,18 +995,20 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 				}
 				//if (storeIndex.size()==newSize){System.out.println("After reduce Deltas at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);}
 				if (storeIndex.size()>newSize){ //System.out.println("Stop at here if (storeIndex.size()>newSize)");
-					/*
+					
 					while(resultFilter.size()>newSize){
 						resultFilter.remove(findMaxSolution (resultFilter));
 					}
-					*/
+					
+					return resultFilter;
+					/*
 					while (resultFilter.size()>newSize) {
 						NondominatedSorting nondominatedSorting = new NondominatedSorting(comparator);
 						nondominatedSorting.updateCrowdingDistance(resultFilter);
 						resultFilter.truncate(resultFilter.size()-1, new CrowdingComparator());
 						//System.out.println("The system test with CrowDistance algorithms with resultFilter.size():"+ resultFilter.size() + ">newSize:"+newSize);
 					}
-					
+					*/
 					//System.out.println("After reduce Deltas at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
 //					currentFront.clear();
 //					currentFront.addAll(resultFilter);
@@ -1083,9 +1087,14 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			//System.out.println("The original previous Population is:*************************************");
 			//NSGAIV.utilsPopulation.printPopulation(previousFront);
 			Population resultFilter = filter(previousFront, currentFront, N, numberOfObjectives);//,comparator);
-			for (Solution solution : resultFilter){
-				add(solution);
-			}	
+			if(resultFilter.size()+size()==size){
+				for (Solution solution : resultFilter){
+					add(solution);
+				}
+				//System.out.println("no need to go to while size():"+size()+" < size"+size);
+			}
+			
+				
 			//System.out.println("The solution more is:="+size+"-"+size()+"="+N);
 			/*
 			System.out.println("\nThe previous Population is:*************************************");
@@ -1100,10 +1109,12 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 			// associate each solution to a reference point
 			//List<List<Solution>> members = associateToReferencePoint(this);
 			//List<List<Solution>> potentialMembers = associateToReferencePoint(front);
+			//List<List<Solution>> potentialMembers = associateToReferencePoint(resultFilter);
 			//Set<Integer> excluded = new HashSet<Integer>();
-			/*
+			
 			// loop over niche-preservation operation until population is full
-			while (size() < size) {
+			/*while (size() < size) {
+				System.out.println("inside while size():"+size()+" < size"+size);
 				// identify reference point with the fewest associated members
 				List<Integer> minIndices = new ArrayList<Integer>();
 				int minCount = Integer.MAX_VALUE;
@@ -1141,9 +1152,10 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends Nondominat
 						potentialMembers.get(minIndex).remove(randSolution);
 					}
 				}
-			}
-			*/
+			}*/
+			
 		}
+		//System.out.println("outside size():"+size()+" == size"+size);
 	}
 
 	/**
