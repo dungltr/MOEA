@@ -65,7 +65,7 @@ import org.moeaframework.util.weights.NormalBoundaryIntersectionGenerator;
  *   <li><a href="http://web.ntnu.edu.tw/~tcchiang/publications/nsga3cpp/nsga3cpp.htm">C++ Implementation by Tsung-Che Chiang</a>
  * </ol>
  */
-public class NSGAVReferencePointNondominatedSortingPopulation extends NondominatedSortingPopulation {
+public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondominatedSortingPopulation {
 
 	/**
 	 * The name of the attribute for storing the normalized objectives.

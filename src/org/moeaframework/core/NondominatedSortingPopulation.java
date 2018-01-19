@@ -77,10 +77,10 @@ public class NondominatedSortingPopulation extends Population {
 		
 		if (Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new FastNondominatedSorting(comparator);
-			//System.out.println("Using FastNondominatedSorting");
+			//System.out.println("Using FastNondominatedSorting in core");
 		} else {
 			nondominatedSorting = new NondominatedSorting(comparator);
-			//System.out.println("Using Original NondominatedSorting");
+			//System.out.println("Using Original NondominatedSorting in core");
 		}
 	}
 
@@ -195,17 +195,13 @@ public class NondominatedSortingPopulation extends Population {
 	 */
 	public void prune(int size) {
 		if (modified) {
-			//System.out.println("-----------------lololol--------------------------------");
 			update();
 		}
-
 		sort(new RankComparator());
-
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
 		Population front = new Population();
-
 		for (int i=size()-1; i>=0; i--) {
 			Solution solution = super.get(i);
 			int rank = (Integer)solution.getAttribute(RANK_ATTRIBUTE);
@@ -218,23 +214,10 @@ public class NondominatedSortingPopulation extends Population {
 				}
 			}
 		}
-		
 		//prune front until correct size
 		while (size() + front.size() > size) {
 			nondominatedSorting.updateCrowdingDistance(front);
 			front.truncate(front.size()-1, new CrowdingComparator());
-			//////////////////////////////////////
-			/*System.out.println("-----------------lelelel--------------------------------");
-			double[] MaxRank = new double [1];
-			MaxRank[0] = (double) size(); 
-			try {
-			writeMatrix2CSV.addArray2Csv("/Users/letrungdung/NondominateSortingPopulation.csv", MaxRank);
-			} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			}
-			*/
-			//////////////////////////////////////
 		}
 		
 		addAll(front);

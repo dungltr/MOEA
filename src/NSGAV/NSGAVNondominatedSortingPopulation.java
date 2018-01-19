@@ -16,19 +16,24 @@
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 package NSGAV;
-import NSGAIV.writeMatrix2CSV;
+
 import static org.moeaframework.core.NondominatedSorting.RANK_ATTRIBUTE;
 
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import org.moeaframework.core.NondominatedSorting;
+import org.moeaframework.core.Population;
+import org.moeaframework.core.Settings;
+import org.moeaframework.core.Solution;
 import org.moeaframework.core.comparator.CrowdingComparator;
 import org.moeaframework.core.comparator.DominanceComparator;
 import org.moeaframework.core.comparator.NondominatedSortingComparator;
 import org.moeaframework.core.comparator.ParetoDominanceComparator;
 import org.moeaframework.core.comparator.RankComparator;
-import org.moeaframework.core.*;
+
+import NSGAIV.writeMatrix2CSV;
 
 /**
  * Population that maintains the {@code rank} and {@code crowdingDistance}
@@ -54,7 +59,7 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 	/**
 	 * The fast non-dominated sorting implementation.
 	 */
-	private final NondominatedSorting nondominatedSorting;
+	protected final NSGAVNondominatedSorting nondominatedSorting;
 
 	/**
 	 * Constructs an empty population that maintains the {@code rank} and
@@ -72,14 +77,14 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 	 */
 	public NSGAVNondominatedSortingPopulation(DominanceComparator comparator) {
 		super();
-		modified = false;
+		modified = false; //old is false
 		
-		if (!Settings.useFastNondominatedSorting()) {
+		if (Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new NSGAVFastNondominatedSorting(comparator);
 			System.out.println("Using FastNondominatedSorting");
 		} else {
 			nondominatedSorting = new NSGAVNondominatedSorting(comparator);
-			System.out.println("Using OriginNondominatedSorting");
+			//System.out.println("Using Original NondominatedSorting");
 		}
 	}
 
@@ -170,7 +175,7 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 		if (modified) {
 			update();
 		}
-		System.out.println("From NSGAIVNondominatedSorting.truncate.2");
+
 		super.truncate(size, comparator);
 	}
 
@@ -182,7 +187,6 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 	 */
 	public void truncate(int size) {
 		truncate(size, new NondominatedSortingComparator());
-		System.out.println("From NSGAIVNondoinatedSortingPopulation.truncate");
 	}
 	
 	/**
@@ -197,17 +201,14 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 			update();
 		}
 		sort(new RankComparator());
-		System.out.println("From NSGAIVNondoinatedSortingPopulation.prune");
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
-		//System.out.println("MaxRank NSGAIVNondoinatedSortingPopulation.prune:=" + maxRank);
 		Population front = new Population();
-
 		for (int i=size()-1; i>=0; i--) {
 			Solution solution = super.get(i);
 			int rank = (Integer)solution.getAttribute(RANK_ATTRIBUTE);
-			//System.out.println("Rank NSGAIVNondoinatedSortingPopulation.prune:=" + rank);
+			
 			if (rank >= maxRank) {
 				super.remove(i);
 			
@@ -215,14 +216,11 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 					front.add(solution);
 				}
 			}
-		}
-		//System.out.println("Front Size NSGAIVNondoinatedSortingPopulation.prune:=" + front.size());
+		}	
 		//prune front until correct size
 		while (size() + front.size() > size) {
 			nondominatedSorting.updateCrowdingDistance(front);
-			System.out.println("Before truncate");
 			front.truncate(front.size()-1, new CrowdingComparator());
-			
 		}
 		
 		addAll(front);
@@ -237,7 +235,7 @@ public class NSGAVNondominatedSortingPopulation extends Population {
 	 * invoke {@link #update()} manually.
 	 */
 	public void update() {
-		modified = false;
+		modified = false; //old is false
 		nondominatedSorting.evaluate(this);
 	}
 

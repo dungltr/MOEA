@@ -198,7 +198,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		Variation variation = OperatorFactory.getInstance().getVariation(null, 
 				properties, problem);// Create variation
 
-		return new NSGAII(problem, population, null, selection, variation,
+		return new NSGAV(problem, population, null, selection, variation,
 				initialization);
 	}
 /*	private Algorithm newNSGAV(TypedProperties properties, Problem problem) {
