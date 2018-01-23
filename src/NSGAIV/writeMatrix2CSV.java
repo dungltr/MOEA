@@ -37,10 +37,15 @@ public class writeMatrix2CSV {
         if (n - 1 == i) tmp = tmp + "number[" + i + "]";
         String FILE_HEADER = tmp;
 */        
-        double[] b = null;
-        List arrays = new ArrayList();
-        for (i = 0; m >i; i++) 
-        arrays.add(a[i]);       
+        double[] b = new double [a[0].length];
+        List<double[]> arrays = new ArrayList<double[]>();
+       // List arrays = new ArrayList();
+        for (i = 0; m >i; i++){
+        	for (int j=0; j< a[i].length; j++)
+        		b[j] = a[i][j];
+        	arrays.add(a[i]);//.add(a[i]); 
+        }
+        arrays.add(a[i]);//.add(a[i]);       
         FileWriter fileWriter = null;				
             try {
                     fileWriter = new FileWriter(fileName);
@@ -72,10 +77,15 @@ public class writeMatrix2CSV {
 			}			
 		}        
     } 
-    public static void addArray2Csv(String filename, double[] tmp) throws IOException {		
+    public static void addArray2Csv(String filename, double[] tmp) {		
             Path filePath = Paths.get(filename);
             if (!Files.exists(filePath)) {
-                Files.createFile(filePath);
+                try {
+					Files.createFile(filePath);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
             String add = "";
             int i = 0;
@@ -83,12 +93,22 @@ public class writeMatrix2CSV {
             add = add + tmp[i] + COMMA_DELIMITER;
             if (tmp.length - 1 == i)
             add = add + tmp[i] + NEW_LINE_SEPARATOR;
-            Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+            try {
+				Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
-    public static void addHeader2tex(String Caption, String filename, String[] algorithms) throws IOException {		
+    public static void addHeader2tex(String Caption, String filename, String[] algorithms) {		
         Path filePath = Paths.get(filename);
         if (!Files.exists(filePath)) {
-            Files.createFile(filePath);
+            try {
+				Files.createFile(filePath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             }
         String column = "l";
         for (int i=0; i< algorithms.length; i++) {
@@ -107,9 +127,14 @@ public class writeMatrix2CSV {
         }
         add = add + "\\\\";
         add = add + "\n" + "\\hline"+"\n";
-        Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+        try {
+			Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
-    public static void addArray2tex(String filename, double[] tmp, String problem) throws IOException {		
+    public static void addArray2tex(String filename, double[] tmp, String problem) {		
     	double min = Double.POSITIVE_INFINITY;
     	for (int i = 0; i< tmp.length; i++){
     		min = Math.min(min, tmp[i]);
@@ -117,7 +142,12 @@ public class writeMatrix2CSV {
     		
         Path filePath = Paths.get(filename);
         if (!Files.exists(filePath)) {
-            Files.createFile(filePath);
+            try {
+				Files.createFile(filePath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             }
         String add = "";     
         if (problem.toLowerCase().contains("_")){
@@ -142,23 +172,49 @@ public class writeMatrix2CSV {
         		add = add + String.format ("%6.3e", tmp[i]) + "\\\\\n";
         	}
         }    
-        Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+        try {
+			Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
-    public static void addBottom2tex(String filename, String[] algorithms) throws IOException {		
+    public static void addBottom2tex(String filename, String[] algorithms) {		
         Path filePath = Paths.get(filename);
         if (!Files.exists(filePath)) {
-            Files.createFile(filePath);
+            try {
+				Files.createFile(filePath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             }
         String add = "\\hline";
         add = add + "\n" + "\\end{tabular}\n\\end{scriptsize}\n\\end{table}\n";
-        Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+        try {
+			Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
-    public static void addMatrix2Csv(String filename, double[][] tmp) throws IOException {		
+    public static void addMatrix2Csv(String filename, double[][] tmp) {		
             Path filePath = Paths.get(filename);
-            if (Files.exists(filePath)) Files.delete(filePath);
+            if (Files.exists(filePath))
+				try {
+					Files.delete(filePath);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             if (!Files.exists(filePath)) {
-                Files.createFile(filePath);
+                try {
+					Files.createFile(filePath);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
             double[] abc = new double[tmp[0].length];
            
@@ -170,7 +226,7 @@ public class writeMatrix2CSV {
             }   
             
         }
-    public static void storeStringToCSV(String string, String fileName, int index) throws IOException{
+    public static void storeStringToCSV(String string, String fileName, int index){
         string = string.replace("}", "");
         //System.out.println(string);
         String[] temp = string.split(",");

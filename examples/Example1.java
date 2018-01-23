@@ -22,6 +22,7 @@ import org.moeaframework.core.Solution;
 import org.moeaframework.core.variable.EncodingUtils;
 import org.moeaframework.core.variable.RealVariable;
 import org.moeaframework.problem.AbstractProblem;
+import org.moeaframework.problem.DTLZ.DTLZ2;
 
 /**
  * Demonstrates using an Executor to solve the UF1 test problem with NSGA-II,
@@ -89,8 +90,8 @@ public class Example1 {
 	}
 
 	public static void main(String[] args) {
-		//test1();
-		test3();
+		test1();
+		//test3();
 		//test4();
 		//test5();
 		//configure and run this experiment
@@ -98,9 +99,10 @@ public class Example1 {
 	}
 	
 	public static void test1(){
+		DTLZ2 problem = new DTLZ2(20);
 		NondominatedPopulation result = new Executor()
-				.withProblem("UF1")
-				.withAlgorithm("NSGAIV")
+				.withProblem(problem)
+				.withAlgorithm("NSGAV")
 				.withMaxEvaluations(10000)
 				.run();
 		

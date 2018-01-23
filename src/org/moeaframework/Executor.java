@@ -737,13 +737,7 @@ public class Executor extends ProblemBuilder {
 			}
 			long stop = System.currentTimeMillis();
 			computeTime [1] = (double) (stop-start);
-			try {
-				writeMatrix2CSV.addArray2Csv(file, computeTime);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//System.out.println("The system take the number of miliseconds is:"+computeTime [1]);
+			writeMatrix2CSV.addArray2Csv(file, computeTime);
 		}
 		progress.stop();
 		return results;
