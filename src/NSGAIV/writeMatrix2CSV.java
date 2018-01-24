@@ -134,6 +134,25 @@ public class writeMatrix2CSV {
 			e.printStackTrace();
 		}
     }
+    public static void addHline2tex(String Caption, String filename, String[] algorithms) {		
+        Path filePath = Paths.get(filename);
+        if (!Files.exists(filePath)) {
+            try {
+				Files.createFile(filePath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            }
+        //String line = "";
+        String add = "\\hline"+"\n";
+        try {
+			Files.write(filePath, add.getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
     public static void addArray2tex(String filename, double[] tmp, String problem) {		
     	double min = Double.POSITIVE_INFINITY;
     	for (int i = 0; i< tmp.length; i++){

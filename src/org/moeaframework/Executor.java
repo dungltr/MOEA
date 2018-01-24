@@ -706,7 +706,7 @@ public class Executor extends ProblemBuilder {
 	 * @return the individual end-of-run approximation sets
 	 */
 	public List<NondominatedPopulation> runSeeds(String directory, int numberOfSeeds) {
-		System.out.println("Say hello from:"+algorithmName+"and"+problemName);
+		System.out.println("Say hello from:"+algorithmName+" and "+problemName);
 		String dataDirectory = directory;
 		String file = dataDirectory + "/" + algorithmName + "_" + problemName + ".csv";
 		isCanceled.set(false);

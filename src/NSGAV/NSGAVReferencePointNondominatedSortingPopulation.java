@@ -289,12 +289,21 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 		//
 		weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
 				divisionsOuter, divisionsInner).generate();
-		
 		//for (int j=0;j<weights.size();j++)
-		//System.out.println(weights.get(j));
-		//NSGAIV.matrixPrint.printArray(weights.);
+		//System.out.println("divisionsOuter:="+divisionsOuter);
+		//System.out.println("divisionsInner:="+divisionsInner);
+		//System.out.println("numberOfObjectives:="+numberOfObjectives);
+		//System.out.println("divisionsInner:="+divisionsInner);
+		//NSGAIV.matrixPrint.printArray(idealPoint);
 	}
-
+	private void initialize(int Outer, int Inner) {
+		idealPoint = new double[numberOfObjectives];
+		Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
+		//System.out.println("Say hello from initialize() in NSGAV");
+		//
+		weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
+				Outer, Inner).generate();
+	}
 	/**
 	 * Updates the ideal point given the solutions currently in this population.
 	 * Determine new coordinates 
@@ -1127,10 +1136,20 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			// calculate the extreme points, calculate the hyperplane defined
 			// by the extreme points, and compute the intercepts
 			//normalizeByIntercepts(calculateIntercepts());
-
-			
+			int addMore = size - size();
+			int Outer = 1;
+			int Inner = 1;
+			if (addMore < numberOfObjectives){
+				Outer = addMore;
+			}else {
+				Outer = numberOfObjectives-1;
+				Inner = addMore - Outer;
+			}
+					
+			initialize(Outer, Inner);
 			//System.out.println("running while size():<size:"+size()+" < size"+size+"and resultFilter:="+resultFilter.size()+"and currentFront:="+front.size());
 			// update the ideal point
+			
 			updateIdealPoint();
 
 			// translate objectives so the ideal point is at the origin
