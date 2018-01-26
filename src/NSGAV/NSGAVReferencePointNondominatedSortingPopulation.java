@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Comparator;
 import java.io.Serializable;
+import java.util.Random;
 
+import org.apache.commons.math3.util.MathArrays;
 import org.moeaframework.core.*;
 import org.moeaframework.core.comparator.CrowdingComparator;
 import org.moeaframework.core.comparator.DominanceComparator;
@@ -71,7 +73,10 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * The name of the attribute for storing the normalized objectives.
 	 */
 	static final String NORMALIZED_OBJECTIVES = "Normalized Objectives";
-
+	static final String Min_OBJECTIVES = "Min Objectives";
+	static final String Max_OBJECTIVES = "Max Objectives";
+	static final String Distance_OBJECTIVES = "Distance to Min Objectives";
+	static final String Group_OBJECTIVES = "Group Objectives";
 	/**
 	 * The number of objectives.
 	 */
@@ -795,6 +800,21 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 		}		
 		return resultFilter.get(index);
 	}
+	protected static Solution findMaxDistanceSolution (Population resultFilter){
+		double[] Distance = new double[resultFilter.size()];
+		for (int i=0; i<resultFilter.size();i++) {
+			Distance[i] = (double)resultFilter.get(i).getAttribute(Distance_OBJECTIVES);
+		}
+		double max = 0;
+		int index = 0;
+		for (int i=0; i<Distance.length;i++){
+			max = Math.max(max, Distance[i]);
+			if (max==Distance[i]) {
+				index = i;
+			}
+		}
+		return resultFilter.get(index);
+	}
 	protected static Solution findMinSolution (Population resultFilter){
 		double[] Distance = new double[resultFilter.size()];
 		for (int i=0; i<resultFilter.size();i++) {
@@ -876,6 +896,72 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	public static Population removeByfindMax (Population resultFront, int newSize){
 		while(resultFront.size()>newSize){
 			resultFront.remove(findMaxSolution (resultFront));
+		}
+		//System.out.println("After truncated at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
+		return resultFront;
+	}
+	public static boolean compareVector(double[] v1, double[] v2){
+		if (v1.length!=v2.length){
+			System.out.println("Cannot compare two vector with difference length");
+			return false;
+		}
+		else{
+			int temp = 0;
+			for (int i = 0; i < v1.length; i++){
+				if (v1[i] != v2[i])
+					temp ++;
+			}
+			if (temp == 0) return true;
+			else return false;
+
+		}
+	}
+	public static Population removeMaxDistance (Population resultFront, int newSize){
+		for (int i = 0; i< resultFront.size();i++){
+			resultFront.get(i).setAttribute(Group_OBJECTIVES,0);
+		}
+		List<Population> Groups = new ArrayList<>();
+		Population BigGroup = resultFront;
+			int Grp = 0;
+			for(int i = 0; i< BigGroup.size(); i++){
+				if ((int)BigGroup.get(i).getAttribute(Group_OBJECTIVES)==0){
+					Grp++;
+					BigGroup.get(i).setAttribute(Group_OBJECTIVES,Grp);
+					double [] mini = (double[]) BigGroup.get(i).getAttribute(Min_OBJECTIVES);
+					double [] maxi = (double[]) BigGroup.get(i).getAttribute(Max_OBJECTIVES);
+					for (int j = i+1; j < BigGroup.size(); j++){
+						if ((i!=j)&&((int)BigGroup.get(j).getAttribute(Group_OBJECTIVES)==0)){
+							double [] minj = (double[]) BigGroup.get(j).getAttribute(Min_OBJECTIVES);
+							double [] maxj = (double[]) BigGroup.get(j).getAttribute(Max_OBJECTIVES);
+							if (compareVector(mini, minj)){
+								if (compareVector(maxi, maxj)){
+									BigGroup.get(j).setAttribute(Group_OBJECTIVES,Grp);
+								}
+							}
+						}
+					}
+				}
+
+			}
+		int Grp_Max = Grp+1;
+		for (int i=0; i < Grp_Max; i++) {
+			Population Group = new Population();
+			for (Solution solution: BigGroup){
+				if((int)solution.getAttribute(Group_OBJECTIVES)==i){
+					Group.add(solution);
+				}
+			}
+			Groups.add(Group);
+		}
+		while(resultFront.size()>newSize){
+			Random rand = new Random();
+
+			// nextInt is normally exclusive of the top value,
+			// so add 1 to make it inclusive
+			int randomNum = rand.nextInt(Grp_Max);
+			Solution solution = findMaxDistanceSolution (Groups.get(randomNum));
+			Groups.get(randomNum).remove(solution);
+			resultFront.remove(solution);
 		}
 		//System.out.println("After truncated at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
 		return resultFront;
@@ -965,6 +1051,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 				}
 				*/
 				//System.out.println("The end of Filter");
+				
 				for (int i = 0; i<currentFront.size();i++){
 					for (int j = 0; j<currentFront.get(i).getNumberOfObjectives();j++) {
 						temp.get(i).setObjective(j, Store.get(i)[j]);//;setObjectives(Store.get(m));
@@ -1078,9 +1165,9 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 					//System.out.println("The system test with CrowDistance algorithms After reduce Deltas at k= "+k+" with resultFilter.size():"+ resultFilter.size() + " = newSize:"+newSize);
 //					currentFront.clear();
 //					currentFront.addAll(resultFilter);
-					//return removeByfindMax(resultFilter, newSize);
+					return removeMaxDistance(resultFilter, newSize);
 					//return removeByCrowdingDistance(currentFront, newSize);
-					return resultFilter;// using Reference Point 
+					//return resultFilter;// using Reference Point 
 				}
 				
 			}//else {System.out.println("The size of result is:storeIndex.size()<newSize");
@@ -1093,6 +1180,54 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 		//System.out.println("After truncated at k = "+k+"and Size:="+resultFilter.size()+"and newSize is:="+newSize);
 		return resultFilter;
 	}
+	public void updateMinMaxPoint(int sizeScale, Population population){
+		double[] pointScale = new double[sizeScale+1];
+		pointScale[0] = 0;
+		double delta = (double) (1)/sizeScale;
+		for (int i = 1; i<sizeScale+1; i++){
+			pointScale[i] = pointScale[i-1] + delta;
+		}
+		for (Solution solution : population) {
+			double[] objectives = (double[])solution.getAttribute(NORMALIZED_OBJECTIVES);
+			double[] objectivesBackup = new double[objectives.length];
+			double[] objectivesLow = new double[objectives.length];
+			double[] objectivesUp = new double[objectives.length];
+
+			for (int i = 0; i < objectivesLow.length; i++){
+				objectivesBackup[i] = objectives[i];
+				objectivesLow[i] = objectives[i];
+				objectivesUp[i] = objectives[i];
+			}
+			//double[] objectivesUp = (double[])solution.getAttribute(NORMALIZED_OBJECTIVES);
+			for (int i = 0; i < numberOfObjectives; i++) {
+				int j = 0;
+				while ((objectivesLow[i]>pointScale[j])&&(j < sizeScale)){
+					j++;
+				}
+				if (j>0)
+					objectivesLow[i] = pointScale[j-1];
+				else objectivesLow[i] = pointScale[0];
+			}
+			for (int i = 0; i < numberOfObjectives; i++) {
+				int j = sizeScale;
+				while ((objectivesUp[i]<pointScale[j])&&(j > 0)){
+					j--;
+				}
+				if (j<sizeScale)
+					objectivesUp[i] = pointScale[j+1];
+				else objectivesUp[i] = pointScale[sizeScale];
+			}
+
+			double distance = MathArrays.distance(objectivesLow, objectivesBackup);
+			solution.setAttribute(Min_OBJECTIVES, objectivesLow);
+			solution.setAttribute(Max_OBJECTIVES, objectivesUp);
+			solution.setAttribute(Distance_OBJECTIVES, distance);
+			//solution.setAttribute(NORMALIZED_OBJECTIVES, objectivesBackup);
+		}
+	}
+
+
+
 	/**
 	 * Truncates the population to the specified size using the reference-point
 	 * based nondominated sorting method.
@@ -1114,10 +1249,6 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 				if (rank > maxRank) {
 					front.add(get(i));
 				}
-				else {
-						if (rank==maxRank) currentFront.add(get(i));
-						if (rank==maxRank-1) previousFront.add(get(i));
-				}
 			}
 			/*
 			System.out.println("Here is the previous Front");
@@ -1136,7 +1267,8 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			// calculate the extreme points, calculate the hyperplane defined
 			// by the extreme points, and compute the intercepts
 			//normalizeByIntercepts(calculateIntercepts());
-			int addMore = size - size();
+
+			/*
 			int Outer = 1;
 			int Inner = 1;
 			if (addMore < numberOfObjectives){
@@ -1145,8 +1277,10 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 				Outer = numberOfObjectives-1;
 				Inner = addMore - Outer;
 			}
-					
+			Outer = 2;
+			Inner = 1;		
 			initialize(Outer, Inner);
+			*/
 			//System.out.println("running while size():<size:"+size()+" < size"+size+"and resultFilter:="+resultFilter.size()+"and currentFront:="+front.size());
 			// update the ideal point
 			
@@ -1158,6 +1292,8 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			// calculate the extreme points, calculate the hyperplane defined
 			// by the extreme points, and compute the intercepts
 			normalizeByIntercepts(calculateIntercepts());
+
+			int gridPoint = 2;
 			// get the solutions in the last front
 			front = new Population();
 			
@@ -1166,11 +1302,14 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 
 				if (rank == maxRank) {
 					front.add(get(i));
+					currentFront.add(get(i));
+				}else {
+					if (rank==maxRank-1) previousFront.add(get(i));
 				}
 			}
-
 			removeAll(front);
-			
+			updateMinMaxPoint(gridPoint, currentFront);
+			int addMore = size - size();
 			int N = size - size();// size = 100; size() is the members of previous front
 			//System.out.println("The solution more is:="+size+"-"+size()+"="+N);
 			//System.out.println("The original previous Population is:*************************************");

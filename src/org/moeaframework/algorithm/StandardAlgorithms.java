@@ -591,7 +591,7 @@ public class StandardAlgorithms extends AlgorithmProvider {
 				properties.getDouble("delta", 0.9),
 				eta,
 				(int)properties.getDouble("updateUtility", -1));
-
+		//System.out.println("The end of MOEA");
 		return algorithm;
 	}
 

@@ -46,7 +46,7 @@ public class GeneratorLatexTable{
 		File filePath = new File(File);
 		if(!filePath.exists()) filePath.createNewFile();
 		File fileAnalysis = new File(reportFile);
-		analyzer.saveData(filePath,"","_"+problem+".txt");
+		//analyzer.saveData(filePath,"","_"+problem+".txt"); save data in .txt - big file
 		if (!fileAnalysis.exists()) fileAnalysis.createNewFile();
 		analyzer.saveAnalysis(fileAnalysis);
 		
