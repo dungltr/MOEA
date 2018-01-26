@@ -1,47 +1,25 @@
 package NSGAV;
 
-import java.util.Properties;
-import NSGAV.NSGAVNondominatedSortingPopulation;
-import org.apache.commons.math3.util.CombinatoricsUtils;
-import org.moeaframework.algorithm.NSGAII;
-import org.moeaframework.algorithm.ReferencePointNondominatedSortingPopulation;
-import org.moeaframework.core.Algorithm;
-import org.moeaframework.core.Initialization;
-import org.moeaframework.core.Problem;
-import org.moeaframework.core.Variation;
+import org.moeaframework.core.*;
+import org.moeaframework.core.comparator.AggregateConstraintComparator;
+import org.moeaframework.core.comparator.ChainedComparator;
+import org.moeaframework.core.comparator.DominanceComparator;
 import org.moeaframework.core.operator.RandomInitialization;
+import org.moeaframework.core.operator.TournamentSelection;
 import org.moeaframework.core.spi.AlgorithmProvider;
 import org.moeaframework.core.spi.OperatorFactory;
 import org.moeaframework.core.spi.ProviderNotFoundException;
 import org.moeaframework.util.TypedProperties;
 
+import java.util.Properties;
+
 //import NSGAIV.NSGAIVNondominatedSortingPopulation;
 
-import org.moeaframework.core.FrameworkException;
-
-import org.moeaframework.core.NondominatedPopulation;
-import org.moeaframework.core.NondominatedSortingPopulation;
-import org.moeaframework.core.PRNG;
-import org.moeaframework.core.Population;
-
-import org.moeaframework.core.Selection;
-import org.moeaframework.core.Solution;
-import org.moeaframework.core.Variable;
-
-import org.moeaframework.core.operator.RandomInitialization;
-import org.moeaframework.core.operator.TournamentSelection;
-
-import org.moeaframework.core.comparator.AggregateConstraintComparator;
-import org.moeaframework.core.comparator.ChainedComparator;
-import org.moeaframework.core.comparator.CrowdingComparator;
-import org.moeaframework.core.comparator.DominanceComparator;
-import org.moeaframework.core.comparator.ParetoDominanceComparator;
-
-public class NSGAVProvider extends AlgorithmProvider {
+public class NSGAVaProvider extends AlgorithmProvider {
 
 	@Override
 /*	public Algorithm getAlgorithm(String name, Properties properties, Problem problem) {
-		if (name.equalsIgnoreCase("NSGAV")) {
+		if (name.equalsIgnoreCase("NSGAVa")) {
 			// if the user requested the RandomWalker algorithm
 			TypedProperties typedProperties = new TypedProperties(properties);
 			
@@ -65,10 +43,10 @@ public class NSGAVProvider extends AlgorithmProvider {
 		TypedProperties typedProperties = new TypedProperties(properties);
 
 		try {
-			if (name.equalsIgnoreCase("NSGAV") ||
-					name.equalsIgnoreCase("NSGA-V") ||
-					name.equalsIgnoreCase("NSGA5")) {
-				return newNSGAV(typedProperties, problem);
+			if (name.equalsIgnoreCase("NSGAVa") ||
+					name.equalsIgnoreCase("NSGA-Va") ||
+					name.equalsIgnoreCase("NSGA5a")) {
+				return newNSGAVa(typedProperties, problem);
 			} else {
 				return null;
 			}
@@ -76,12 +54,12 @@ public class NSGAVProvider extends AlgorithmProvider {
 			throw new ProviderNotFoundException(name, e);
 		}
 	}
-	private Algorithm newNSGAV(TypedProperties properties, Problem problem) {
+	private Algorithm newNSGAVa(TypedProperties properties, Problem problem) {
 		
 		int divisionsOuter = 4;
 		int divisionsInner = 0;
 		/*
-		//System.out.println("Say hello from NSGAV provider");
+		//System.out.println("Say hello from NSGAVa provider");
 		if (properties.contains("divisionsOuter") && properties.contains("divisionsInner")) {
 			divisionsOuter = (int)properties.getDouble("divisionsOuter", 4);
 			divisionsInner = (int)properties.getDouble("divisionsInner", 0);
@@ -137,23 +115,23 @@ public class NSGAVProvider extends AlgorithmProvider {
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);// Create initialization
 		
-		NSGAVReferencePointNondominatedSortingPopulation population = new NSGAVReferencePointNondominatedSortingPopulation(
+		NSGAVaReferencePointNondominatedSortingPopulation population = new NSGAVaReferencePointNondominatedSortingPopulation(
 				problem.getNumberOfObjectives(), divisionsOuter, divisionsInner);
 		Selection selection = null;
 		if (problem.getNumberOfConstraints() == 0) {
 			selection = new Selection() {
-	
+
 				@Override
 				public Solution[] select(int arity, Population population) {
 					Solution[] result = new Solution[arity];
-					
+
 					for (int i = 0; i < arity; i++) {
 						result[i] = population.get(PRNG.nextInt(population.size()));
 					}
-					
+
 					return result;
 				}
-				
+
 			};
 		} else {
 			selection = new TournamentSelection(2, new ChainedComparator(
@@ -164,14 +142,14 @@ public class NSGAVProvider extends AlgorithmProvider {
 						public int compare(Solution solution1, Solution solution2) {
 							return PRNG.nextBoolean() ? -1 : 1;
 						}
-						
+
 					}));
 		}
-		
-		/////////////////////NSGAVReferencePointNondominatedSortingPopulation
-		/*NSGAVNondominatedSortingPopulation population = 
-				new NSGAVNondominatedSortingPopulation();// Create population
-		TournamentSelection selection = null;		
+
+		/////////////////////NSGAVaReferencePointNondominatedSortingPopulation
+		/*NSGAVaNondominatedSortingPopulation population =
+				new NSGAVaNondominatedSortingPopulation();// Create population
+		TournamentSelection selection = null;
 		if (properties.getBoolean("withReplacement", true)) {
 			selection = new TournamentSelection(2, new ChainedComparator(
 					new ParetoDominanceComparator(),
@@ -182,33 +160,33 @@ public class NSGAVProvider extends AlgorithmProvider {
 		// disable swapping variables in SBX operator to remain consistent with
 		// Deb's implementation (thanks to Haitham Seada for identifying this
 		// discrepancy)
-		
+
 		if (!properties.contains("sbx.swap")) {
 			properties.setBoolean("sbx.swap", false);
 		}
-		
+
 		if (!properties.contains("sbx.distributionIndex")) {
 			properties.setDouble("sbx.distributionIndex", 30.0);
 		}
-		
+
 		if (!properties.contains("pm.distributionIndex")) {
 			properties.setDouble("pm.distributionIndex", 20.0);
 		}
-		
-		Variation variation = OperatorFactory.getInstance().getVariation(null, 
+
+		Variation variation = OperatorFactory.getInstance().getVariation(null,
 				properties, problem);// Create variation
 
-		return new NSGAV(problem, population, null, selection, variation,
+		return new NSGAVa(problem, population, null, selection, variation,
 				initialization);
 	}
-/*	private Algorithm newNSGAV(TypedProperties properties, Problem problem) {
+/*	private Algorithm newNSGAVa(TypedProperties properties, Problem problem) {
 		int populationSize = (int)properties.getDouble("populationSize", 100);
 
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);
 
-		NSGAVNondominatedSortingPopulation population = 
-				new NSGAVNondominatedSortingPopulation();
+		NSGAVaNondominatedSortingPopulation population = 
+				new NSGAVaNondominatedSortingPopulation();
 
 		TournamentSelection selection = null;
 		

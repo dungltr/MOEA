@@ -4,3 +4,4 @@ org.moeaframework.algorithm.pisa.PISAAlgorithms
 randomwalker.RandomWalkerProvider
 NSGAIV.NSGAIVProvider
 NSGAV.NSGAVProvider
+NSGAV.NSGAVaProvider

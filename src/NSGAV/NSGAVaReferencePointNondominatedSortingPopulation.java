@@ -17,18 +17,6 @@
  */
 package NSGAV;
 
-import static org.moeaframework.core.FastNondominatedSorting.RANK_ATTRIBUTE;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Comparator;
-import java.io.Serializable;
-import java.util.Random;
-
 import org.apache.commons.math3.util.MathArrays;
 import org.moeaframework.core.*;
 import org.moeaframework.core.comparator.CrowdingComparator;
@@ -36,6 +24,10 @@ import org.moeaframework.core.comparator.DominanceComparator;
 import org.moeaframework.core.comparator.RankComparator;
 import org.moeaframework.util.Vector;
 import org.moeaframework.util.weights.NormalBoundaryIntersectionGenerator;
+
+import java.util.*;
+
+import static org.moeaframework.core.FastNondominatedSorting.RANK_ATTRIBUTE;
 
 /**
  * Implementation of the reference-point-based nondominated sorting method
@@ -67,7 +59,7 @@ import org.moeaframework.util.weights.NormalBoundaryIntersectionGenerator;
  *   <li><a href="http://web.ntnu.edu.tw/~tcchiang/publications/nsga3cpp/nsga3cpp.htm">C++ Implementation by Tsung-Che Chiang</a>
  * </ol>
  */
-public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondominatedSortingPopulation {
+public class NSGAVaReferencePointNondominatedSortingPopulation extends NSGAVaNondominatedSortingPopulation {
 
 	/**
 	 * The name of the attribute for storing the normalized objectives.
@@ -121,7 +113,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param numberOfObjectives the number of objectives
 	 * @param divisions the number of divisions
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(int numberOfObjectives) {
+	public NSGAVaReferencePointNondominatedSortingPopulation(int numberOfObjectives) {
 		super();
 		this.numberOfObjectives = numberOfObjectives;
 		this.divisionsOuter = 0;
@@ -136,7 +128,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param numberOfObjectives the number of objectives
 	 * @param divisions the number of divisions
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(int numberOfObjectives,
+	public NSGAVaReferencePointNondominatedSortingPopulation(int numberOfObjectives,
 			int divisions) {
 		super();
 		this.numberOfObjectives = numberOfObjectives;
@@ -154,7 +146,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param comparator the dominance comparator
 	 * @param iterable the solutions used to initialize this population
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(
+	public NSGAVaReferencePointNondominatedSortingPopulation(
 			int numberOfObjectives, int divisions,
 			DominanceComparator comparator,
 			Iterable<? extends Solution> iterable) {
@@ -174,7 +166,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param divisions the number of divisions
 	 * @param comparator the dominance comparator
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(
+	public NSGAVaReferencePointNondominatedSortingPopulation(
 			int numberOfObjectives, int divisions,
 			DominanceComparator comparator) {
 		super(comparator);
@@ -193,7 +185,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param divisions the number of divisions
 	 * @param iterable the solutions used to initialize this population
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(
+	public NSGAVaReferencePointNondominatedSortingPopulation(
 			int numberOfObjectives, int divisions,
 			Iterable<? extends Solution> iterable) {
 		super(iterable);
@@ -212,7 +204,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param divisionsOuter the number of outer divisions
 	 * @param divisionsInner the number of inner divisions
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(int numberOfObjectives,
+	public NSGAVaReferencePointNondominatedSortingPopulation(int numberOfObjectives,
 			int divisionsOuter, int divisionsInner) {
 		super();
 		this.numberOfObjectives = numberOfObjectives;
@@ -232,7 +224,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param comparator the dominance comparator
 	 * @param iterable the solutions used to initialize this population
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(
+	public NSGAVaReferencePointNondominatedSortingPopulation(
 			int numberOfObjectives, int divisionsOuter, int divisionsInner,
 			DominanceComparator comparator,
 			Iterable<? extends Solution> iterable) {
@@ -253,7 +245,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param divisionsInner the number of inner divisions
 	 * @param comparator the dominance comparator
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(
+	public NSGAVaReferencePointNondominatedSortingPopulation(
 			int numberOfObjectives, int divisionsOuter, int divisionsInner,
 			DominanceComparator comparator) {
 		super(comparator);
@@ -273,7 +265,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @param divisionsInner the number of inner divisions
 	 * @param iterable the solutions used to initialize this population
 	 */
-	public NSGAVReferencePointNondominatedSortingPopulation(
+	public NSGAVaReferencePointNondominatedSortingPopulation(
 			int numberOfObjectives, int divisionsOuter, int divisionsInner,
 			Iterable<? extends Solution> iterable) {
 		super(iterable);
@@ -290,7 +282,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	private void initialize() {
 		idealPoint = new double[numberOfObjectives];
 		Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
-		//System.out.println("Say hello from initialize() in NSGAV");
+		//System.out.println("Say hello from initialize() in NSGAVa");
 		//
 		//weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
 		//		divisionsOuter, divisionsInner).generate();
@@ -304,7 +296,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	private void initialize(int Outer, int Inner) {
 		idealPoint = new double[numberOfObjectives];
 		Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
-		//System.out.println("Say hello from initialize() in NSGAV");
+		//System.out.println("Say hello from initialize() in NSGAVa");
 		//
 		weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
 				Outer, Inner).generate();
@@ -634,7 +626,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * @return the solution nearest to the reference point
 	 */
 	protected Solution findSolutionWithMinimumDistance(List<Solution> solutions, double[] weight) {
-		//System.out.println("Say hello from findSolutionWithMinimumDistance in NSGAV Reference point");
+		//System.out.println("Say hello from findSolutionWithMinimumDistance in NSGAVa Reference point");
 		double minDistance = Double.POSITIVE_INFINITY;
 		Solution minSolution = null;
 
@@ -1042,15 +1034,14 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			//System.out.println("no need to truncated-----------------------------------");
 			//return removeByfindMax(currentFront, newSize);
 			//return removeByCrowdingDistance(currentFront, newSize);
-			return removeMaxDistanceInGroup(currentFront,newSize);
-			//return removeMaxDistanceInGrid(currentFront,newSize);
+			//return removeMaxDistanceInGroup(currentFront,newSize);
+			return removeMaxDistanceInGrid(currentFront,newSize);
 		}	
 		//List<double []> Store = updateDeltas (temp, 1);
 		//System.out.println("\nThis is the Deltas");
 		//List<double []> Deltas = updateDeltas (temp, epsilon);
-		return removeMaxDistanceInGroup(currentFront,newSize);
-		//return removeMaxDistanceInGrid(currentFront,newSize);
-
+		return removeMaxDistanceInGrid(currentFront,newSize);
+		//return removeMaxDistanceInGroup(currentFront,newSize);
 		/*
 		while (resultFilter.size()<newSize) {
 
@@ -1338,8 +1329,8 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 				//System.out.println("no need to go to while size():"+size()+" = size"+size);
 			}
 			*/
-			Population temp = removeMaxDistanceInGroup(currentFront,N);
-			//Population temp = removeMaxDistanceInGrid(currentFront,N);
+			//Population temp = removeMaxDistanceInGroup(currentFront,N);
+			Population temp = removeMaxDistanceInGrid(currentFront,N);
 			if(temp.size()+size()==size){
 				for (Solution solution : temp){
 					add(solution);
