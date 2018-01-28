@@ -1299,7 +1299,7 @@ public class NSGAVaReferencePointNondominatedSortingPopulation extends NSGAVaNon
 			// by the extreme points, and compute the intercepts
 			normalizeByIntercepts(calculateIntercepts());
 
-			int gridPoint = 2;
+			int gridPoint = 10;
 			// get the solutions in the last front
 			front = new Population();
 			

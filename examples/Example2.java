@@ -72,7 +72,7 @@ public class Example2 {
 	
 	public static void main(String[] args) throws IOException {
 		List<String> Problems = new ArrayList<>();
-		int Min = 11;
+		int Min = 10;
 		int Max = 20;
 		List<DTLZ1> problemsDTLZ1 = DTLZ1 (Min, Max);
 		List<DTLZ2> problemsDTLZ2 = DTLZ2 (Min, Max);
@@ -80,10 +80,12 @@ public class Example2 {
 		List<DTLZ4> problemsDTLZ4 = DTLZ4 (Min, Max);
 		
 		String Caption = "";
-		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_All_Grid_2_IGD_MaxParetorStandard_NonFast_3algoritms";
+		String homeFile =ReadFile.readhome("HOME_jMetalData")+"/"+"MOEA_AllProblem_and_objectives_InGroup_Grid_2_IGD_MaxParetorStandard_3algoritms_25runSeed";
+		//NSGAVa : remove in Grid
+		//NSGAV : remove in Group
 		//String texFile = File + ".tex";
 		//String[] problems = {"UF1","UF2","UF3","DTLZ1.8D","DTLZ2.8D","DTLZ3.8D"};
-		String [] allAlgorithms = { "NSGAVa","NSGAV","NSGAIII", "NSGAII"};//, "eNSGAII", "GDE3"};
+		String [] allAlgorithms = { "NSGAV","NSGAIII", "NSGAII"};//, "eNSGAII", "GDE3", "MOEAD"};
 				//"MOEAD", "MSOPS", "CMA-ES", "SPEA2", "PAES", "PESA2", "OMOPSO",
 				//"SMPSO", "IBEA", "SMS-EMOA", "VEGA", "DBEA", "Random", "RVEA",
 				//"RSO" };
@@ -92,36 +94,36 @@ public class Example2 {
 			"DTLZ1_2", "DTLZ2_2", "DTLZ3_2", "DTLZ4_2", "DTLZ7_2", 
 			"ROT_DTLZ1_2", "ROT_DTLZ2_2", "ROT_DTLZ3_2", "ROT_DTLZ4_2", "ROT_DTLZ7_2", 
 			"UF1", "UF2", "UF3", "UF4", "UF5", "UF6", "UF7", "UF8", "UF9", "UF10", "UF11", "UF12", "UF13",
-			"CF1", "CF2", "CF3", "CF4", "CF5", "CF6", "CF7", "CF8", "CF9", "CF10",
+			"CF1", "CF2", "CF3", "CF4", "CF5",// "CF6", "CF7", "CF8", "CF9", "CF10",
 			"LZ1", "LZ2", "LZ3", "LZ4", "LZ5", "LZ6", "LZ7", "LZ8", "LZ9",
 			"WFG1_2", "WFG2_2", "WFG3_2", "WFG4_2", "WFG5_2", "WFG6_2", "WFG7_2", "WFG8_2", "WFG9_2",
-			"ZDT1", "ZDT2", "ZDT3", "ZDT4", "ZDT5", "ZDT6"};/*,
-			"Belegundu", "Binh", "Binh2", "Binh3", "Binh4", "Fonseca", 
-			"Fonseca2", "Jimenez", "Kita", "Kursawe", "Laumanns", "Lis", 
-			"Murata", "Obayashi", "OKA1", "OKA2", "Osyczka", "Osyczka2", 
+			"ZDT1", "ZDT2", "ZDT3", "ZDT4", "ZDT5", "ZDT6",
+			//"Belegundu", "Binh", "Binh2", "Binh3", "Binh4", "Fonseca",
+			//"Fonseca2", "Jimenez", "Kita", "Kursawe", "Laumanns", "Lis",
+			"Murata", "Obayashi", "OKA1", "OKA2", //"Osyczka", "Osyczka2",
 			"Poloni", "Quagliarella", "Rendon", "Rendon2", "Schaffer", 
-			"Schaffer2", "Srinivas", "Tamaki", "Tanaka", "Viennet", 
-			"Viennet2", "Viennet3", "Viennet4"};*/
-		String[] UF = {"UF1","UF2","UF3"};
-		String[] ZDT = {"ZDT1","ZDT2","ZDT3"};
-		String[] DTLZ_2 = {"DTLZ1_2","DTLZ2_2","DTLZ3_2"};
-		String[] DTLZ_3 = {"DTLZ1_3","DTLZ2_3","DTLZ3_3"};
-		String[] DTLZ_4 = {"DTLZ1_4","DTLZ2_4","DTLZ3_4"};
-		String[] DTLZ_6 = {"DTLZ1_6","DTLZ2_6","DTLZ3_6"};
-		String[] DTLZ_8 = {"DTLZ1_8","DTLZ2_8","DTLZ3_8"};
+			"Schaffer2", //"Srinivas", "Tamaki", "Tanaka", "Viennet",
+			"Viennet2", "Viennet3"};//, "Viennet4"};
+		String[] UF = {"UF1","UF3"};//"UF2","UF4","UF5","UF6"};
+		String[] ZDT = {"ZDT1","ZDT3"};//"ZDT2","ZDT4","ZDT5","ZDT6"};
+		String[] DTLZ_2 = {"DTLZ1_2","DTLZ3_2"};//,"DTLZ2_2","DTLZ4_2"};//
+		String[] DTLZ_3 = {"DTLZ1_3","DTLZ3_3"};//,"DTLZ3_3","DTLZ4_3"};
+		String[] DTLZ_4 = {"DTLZ1_4","DTLZ3_4"};//,"DTLZ3_4","DTLZ4_4"};
+		String[] DTLZ_6 = {"DTLZ1_6","DTLZ3_6"};//,"DTLZ3_6","DTLZ4_6"};
+		String[] DTLZ_8 = {"DTLZ1_8","DTLZ3_8"};//,"DTLZ3_8","DTLZ4_8"};
 		//String[] DTLZ = DTLZ_8;
-		//Problems = addToString(Problems,allProblems);
-		Problems = addToString(Problems,UF);
-		Problems = addToString(Problems,ZDT);
-		Problems = addToString(Problems,DTLZ_2);
-		Problems = addToString(Problems,DTLZ_3);
-		Problems = addToString(Problems,DTLZ_4);
-		Problems = addToString(Problems,DTLZ_6);
-		Problems = addToString(Problems,DTLZ_8);
+		Problems = addToString(Problems,allProblems);
+		//Problems = addToString(Problems,UF);
+		//Problems = addToString(Problems,ZDT);
+		//Problems = addToString(Problems,DTLZ_2);
+		//Problems = addToString(Problems,DTLZ_3);
+		//Problems = addToString(Problems,DTLZ_4);
+		//Problems = addToString(Problems,DTLZ_6);
+		//Problems = addToString(Problems,DTLZ_8);
 		String[] algorithms = allAlgorithms;//{"NSGAII","NSGAIII", "NSGAV"};//, "GDE3", "eMOEA" };//, "GDE3", "eMOEA" };
 		List<String> Standards = new ArrayList<>();
-		Standards.add("Generational Distance");
-		Standards.add("Hyper volume");
+		//Standards.add("Generational Distance");
+		//Standards.add("Hyper volume");
 		Standards.add("Inverted Generational Distance");
 		Standards.add("Maximum Pareto Front Error");
 		/*
@@ -141,7 +143,7 @@ public class Example2 {
 			//GeneratorLatexTable.GeneratorComputeTimeToLatex(homeFile, Caption, problemsDTLZ1, algorithms, problemsDTLZ1.get(0));
 			//DTLZ2Distance(homeFile, problemsDTLZ2, algorithms, Caption, keep);
 			//GeneratorLatexTable.GeneratorComputeTimeToLatex(homeFile, Caption, problemsDTLZ2, algorithms, problemsDTLZ2.get(0));
-			//DTLZ3Distance(homeFile, problemsDTLZ3, algorithms, Caption, keep);
+			//DTLZ3Distance(homeFile, problemsDTLZ3, algorithms, Caption, end);
 			//GeneratorLatexTable.GeneratorComputeTimeToLatex(homeFile, Caption, problemsDTLZ3, algorithms, problemsDTLZ3.get(0));
 			//DTLZ4Distance(homeFile, problemsDTLZ4, algorithms, Caption, end);
 			//GeneratorLatexTable.GeneratorComputeTimeToLatex(homeFile, Caption, problemsDTLZ4, algorithms, problemsDTLZ4.get(0));
@@ -276,7 +278,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,25));
 		}
 		//print the results
 		//analyzer.showAggregate();
@@ -314,7 +316,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,25));
 		}
 		//print the results
 		//analyzer.showAggregate();
@@ -352,7 +354,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,25));
 		}
 		//print the results
 		//analyzer.showAggregate();
@@ -390,7 +392,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).withProblem(problem.getName().toString()+"_"+problem.getNumberOfObjectives()).runSeeds(File,25));
 		}
 		//print the results
 		//analyzer.showAggregate();
@@ -428,7 +430,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).runSeeds(File,25));
 		}
 		//print the results
 		//analyzer.showAggregate();
@@ -474,7 +476,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).runSeeds(File,25));
 		}
 
 		//print the results
@@ -515,7 +517,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).runSeeds(File,25));
 		}
 
 		//print the results
@@ -560,7 +562,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).runSeeds(File,25));
 		}
 
 		//print the results
@@ -604,7 +606,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(File,10));
+					executor.withAlgorithm(algorithm).runSeeds(File,25));
 		}
 
 		//print the results
@@ -654,7 +656,7 @@ public static void DTLZ4Distance(String homeFile, List<DTLZ4> Problems, String[]
 		//run each algorithm for 50 seeds
 		for (String algorithm : algorithms) {
 			analyzer.addAll(algorithm, 
-					executor.withAlgorithm(algorithm).runSeeds(File ,10));
+					executor.withAlgorithm(algorithm).runSeeds(File ,25));
 		}
 
 		//print the results

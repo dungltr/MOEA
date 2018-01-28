@@ -97,6 +97,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 * The ideal point, updated each iteration.
 	 */
 	double[] idealPoint;
+	double[] idealMaxPoint;
 	static double[] averagePreviousPoint;
 	static double[] averageCurrentPoint;
 
@@ -289,7 +290,9 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 	 */
 	private void initialize() {
 		idealPoint = new double[numberOfObjectives];
+		idealMaxPoint = new double[numberOfObjectives];
 		Arrays.fill(idealPoint, Double.POSITIVE_INFINITY);
+		Arrays.fill(idealMaxPoint, Double.NEGATIVE_INFINITY);
 		//System.out.println("Say hello from initialize() in NSGAV");
 		//
 		//weights = new NormalBoundaryIntersectionGenerator(numberOfObjectives,
@@ -328,7 +331,25 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			*/
 		}
 	}
+	/**
+	 * Updates the ideal max point given the solutions currently in this population.
+	 * Determine new coordinates
+	 */
+	protected void updateIdealMaxPoint() {
+		for (Solution solution : this) {
+			if (solution.getNumberOfObjectives() != numberOfObjectives) {
+				throw new FrameworkException("incorrect number of objectives");
+			}
 
+			for (int i = 0; i < numberOfObjectives; i++) {
+				idealMaxPoint[i] = Math.max(idealMaxPoint[i], solution.getObjective(i));
+			}
+			/*
+			System.out.println("\nidealPoint:=");
+			NSGAIV.matrixPrint.printArray(idealPoint);
+			*/
+		}
+	}
 	/**
 	 * Offsets the solutions in this population by the ideal point.  This
 	 * method does not modify the objective values, it creates a new attribute
@@ -364,7 +385,22 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			}
 		}
 	}
+	/**
+	 * Normalizes the solutions in this population by the given intercepts
+	 * (or scaling factors).  This method does not modify the objective values,
+	 * it modifies the {@value NORMALIZED_OBJECTIVES} attribute.
+	 *
+	 * Translate to new coordinates with scaling
+	 */
+	protected void normalizeByMinMax() {
+		for (Solution solution : this) {
+			double[] objectives = (double[])solution.getAttribute(NORMALIZED_OBJECTIVES);
 
+			for (int i = 0; i < solution.getNumberOfObjectives(); i++) {
+				objectives[i] /= idealMaxPoint[i]-idealPoint[i];
+			}
+		}
+	}
 	/**
 	 * The Chebyshev achievement scalarizing function.
 	 * 
@@ -1300,14 +1336,14 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			// update the ideal point
 			
 			updateIdealPoint();
-
+			updateIdealMaxPoint();
 			// translate objectives so the ideal point is at the origin
 			translateByIdealPoint();
 
 			// calculate the extreme points, calculate the hyperplane defined
 			// by the extreme points, and compute the intercepts
-			normalizeByIntercepts(calculateIntercepts());
-
+			//normalizeByIntercepts(calculateIntercepts());
+			normalizeByMinMax();
 			int gridPoint = 2;
 			// get the solutions in the last front
 			front = new Population();
