@@ -98,7 +98,7 @@ public class GeneratorLatexTable{
 		File fileTex = new File(texFile);
 		
 		String temp = Files.readAllLines(Paths.get(texFileTable)).get(6);
-		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("IV", "V").substring(1);
+		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("-G", "V").substring(3);
 		String [] titleAlgorithms = temp.split("&");
 		double[][] averageTime = ComputeTime(fileCSV, Problems, titleAlgorithms); 
 		if (!fileTex.exists()){
@@ -135,7 +135,7 @@ public class GeneratorLatexTable{
 		File fileTex = new File(texFile);
 		
 		String temp = Files.readAllLines(Paths.get(texFileTable)).get(6);
-		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("IV", "V").substring(1);
+		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("-G", "V").substring(3);
 		String [] titleAlgorithms = temp.split("&");
 		double[][] averageTime = ComputeTime(fileCSV, convertProblemsDTLZ1ToString(Problems), titleAlgorithms); 
 		if (!fileTex.exists()){
@@ -166,7 +166,7 @@ public class GeneratorLatexTable{
 		File fileTex = new File(texFile);
 		
 		String temp = Files.readAllLines(Paths.get(texFileTable)).get(6);
-		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("IV", "V").substring(1);
+		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("-G", "V").substring(3);
 		String [] titleAlgorithms = temp.split("&");
 		double[][] averageTime = ComputeTime(fileCSV, convertProblemsDTLZ2ToString(Problems), titleAlgorithms); 
 		if (!fileTex.exists()){
@@ -197,7 +197,7 @@ public class GeneratorLatexTable{
 		File fileTex = new File(texFile);
 		
 		String temp = Files.readAllLines(Paths.get(texFileTable)).get(6);
-		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("IV", "V").substring(1);
+		temp = temp.replaceAll(" ", "").replaceAll("\\\\", "").replaceAll("hline", "").replaceAll("-G", "V").substring(3);
 		String [] titleAlgorithms = temp.split("&");
 		double[][] averageTime = ComputeTime(fileCSV, convertProblemsDTLZ3ToString(Problems), titleAlgorithms); 
 		if (!fileTex.exists()){

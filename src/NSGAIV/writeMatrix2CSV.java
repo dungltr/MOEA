@@ -111,7 +111,7 @@ public class writeMatrix2CSV {
 			}
             }
         String column = "l";
-        for (int i=0; i< algorithms.length; i++) {
+        for (int i=0; i<= algorithms.length; i++) {
         		column = column + "l";
         }
         //String line = "";
@@ -121,9 +121,10 @@ public class writeMatrix2CSV {
    			 "\\centering\n"+
    			 "\\begin{scriptsize}\n"+
    			 "\\begin{tabular}{"+column+"}\n" + 
-   			 "\\hline ";
+   			 "\\hline & m ";
+
         for (int i=0; i<algorithms.length;i++){
-        	add = add + " & " + algorithms[i].replaceAll("V", "IV");
+        	add = add + " & " + algorithms[i].replaceAll("V", "-G");
         }
         add = add + "\\\\";
         add = add + "\n" + "\\hline"+"\n";
@@ -170,11 +171,11 @@ public class writeMatrix2CSV {
             }
         String add = "";     
         if (problem.toLowerCase().contains("_")){
-        	String tempString = problem.substring(problem.indexOf("_"));
-        	tempString = problem.replace(tempString, "");
+        	String tempString;// = problem.substring(problem.indexOf("_"));
+        	tempString = problem.replace("_", " & ");
         	add = add + tempString +" & ";
         }else{
-        	add = add + problem +" & ";
+        	add = add + problem +" & 2 & ";
         }  
         int i = 0;
         for (i = 0; tmp.length - 1 > i; i++){

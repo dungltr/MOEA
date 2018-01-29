@@ -42,7 +42,8 @@ public class utilsCSVtoLatex{
 	    	        }
 	    	        writeMatrix2CSV.addBottom2tex(fileName, algorithms);
 	    		}else{
-	    			 System.out.println("File does not exists!");
+					System.out.println("File does not exists!"+file);
+					//System.out.println("File does not exists!");
 	    		}
 			}catch(IOException e){
 	    		e.printStackTrace();
@@ -70,7 +71,7 @@ public class utilsCSVtoLatex{
     	        		average = average + Double.parseDouble(numbers[numbers.length-1])/linenumber;
     	        }
     			}else{
-    			 System.out.println("File does not exists!");
+    			 System.out.println("File does not exists!"+fileCSV);
     			}
 		}catch(IOException e){
     			e.printStackTrace();
