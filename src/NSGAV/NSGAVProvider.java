@@ -139,7 +139,8 @@ public class NSGAVProvider extends AlgorithmProvider {
 		int populationSize = 100;
 		if (properties.contains("populationSize")) {
 			populationSize = (int)properties.getDouble("populationSize", 100);	
-		}	
+		}
+		//System.out.println("Population is:="+populationSize);
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);// Create initialization
 		
@@ -265,6 +266,7 @@ public class NSGAVProvider extends AlgorithmProvider {
 		if (properties.contains("populationSize")) {
 			populationSize = (int)properties.getDouble("populationSize", 100);
 		}
+		System.out.println("Population is:="+populationSize);
 		Initialization initialization = new RandomInitialization(problem,
 				populationSize);// Create initialization
 

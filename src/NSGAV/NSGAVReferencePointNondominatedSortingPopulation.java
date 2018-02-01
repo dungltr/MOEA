@@ -1344,7 +1344,7 @@ public class NSGAVReferencePointNondominatedSortingPopulation extends NSGAVNondo
 			// by the extreme points, and compute the intercepts
 			//normalizeByIntercepts(calculateIntercepts());
 			normalizeByMinMax();
-			int gridPoint = 2;
+			int gridPoint = 10;
 			// get the solutions in the last front
 			front = new Population();
 			
