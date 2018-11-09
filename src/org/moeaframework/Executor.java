@@ -42,6 +42,9 @@ import org.moeaframework.util.io.FileUtils;
 import org.moeaframework.util.progress.ProgressHelper;
 import org.moeaframework.util.progress.ProgressListener;
 
+import NSGAIV.ReadFile;
+import NSGAIV.writeMatrix2CSV;
+
 /**
  * Configures and executes algorithms while hiding the underlying boilerplate 
  * code needed to setup and safely execute an algorithm.  For example, the 
@@ -702,7 +705,10 @@ public class Executor extends ProblemBuilder {
 	 * @param numberOfSeeds the number of seeds to run
 	 * @return the individual end-of-run approximation sets
 	 */
-	public List<NondominatedPopulation> runSeeds(int numberOfSeeds) {
+	public List<NondominatedPopulation> runSeeds(String directory, int numberOfSeeds) {
+		System.out.println("Say hello from:"+algorithmName+" and "+problemName);
+		String dataDirectory = directory;
+		String file = dataDirectory + "/" + algorithmName + "_" + problemName + ".csv";
 		isCanceled.set(false);
 		
 		if ((checkpointFile != null) && (numberOfSeeds > 1)) {
@@ -719,6 +725,9 @@ public class Executor extends ProblemBuilder {
 		progress.start(numberOfSeeds, maxEvaluations, maxTime);
 		
 		for (int i = 0; i < numberOfSeeds && !isCanceled.get(); i++) {
+			double [] computeTime = new double [2];
+			computeTime [0] = i;
+			long start = System.currentTimeMillis(); 
 			NondominatedPopulation result = runSingleSeed(i+1, numberOfSeeds,
 					createTerminationCondition());
 			
@@ -726,10 +735,72 @@ public class Executor extends ProblemBuilder {
 				results.add(result);
 				progress.nextSeed();
 			}
+			long stop = System.currentTimeMillis();
+			computeTime [1] = (double) (stop-start);
+			writeMatrix2CSV.addArray2Csv(file, computeTime);
 		}
-		
 		progress.stop();
-		
+		return results;
+	}
+	public List<NondominatedPopulation> runSeedsProblemName(String directory, int numberOfSeeds, String ProblemName) {
+		problemName = ProblemName;
+		System.out.println("Say hello from:"+algorithmName+" and "+problemName);
+		String dataDirectory = directory;
+		String file = dataDirectory + "/" + algorithmName + "_" + problemName + ".csv";
+		isCanceled.set(false);
+
+		if ((checkpointFile != null) && (numberOfSeeds > 1)) {
+			System.err.println(
+					"checkpoints not supported when running multiple seeds");
+			checkpointFile = null;
+		}
+
+		int maxEvaluations = properties.getInt("maxEvaluations", -1);
+		long maxTime = properties.getLong("maxTime", -1);
+		List<NondominatedPopulation> results =
+				new ArrayList<NondominatedPopulation>();
+
+		progress.start(numberOfSeeds, maxEvaluations, maxTime);
+
+		for (int i = 0; i < numberOfSeeds && !isCanceled.get(); i++) {
+			double [] computeTime = new double [2];
+			computeTime [0] = i;
+			long start = System.currentTimeMillis();
+			NondominatedPopulation result = runSingleSeed(i+1, numberOfSeeds,
+					createTerminationCondition());
+
+			if (result != null) {
+				results.add(result);
+				progress.nextSeed();
+			}
+			long stop = System.currentTimeMillis();
+			computeTime [1] = (double) (stop-start);
+			writeMatrix2CSV.addArray2Csv(file, computeTime);
+		}
+		progress.stop();
+		return results;
+	}
+	public List<NondominatedPopulation> runSeeds(int numberOfSeeds) {
+		isCanceled.set(false);
+		if ((checkpointFile != null) && (numberOfSeeds > 1)) {
+			System.err.println(
+					"checkpoints not supported when running multiple seeds");
+			checkpointFile = null;
+		}		
+		int maxEvaluations = properties.getInt("maxEvaluations", -1);
+		long maxTime = properties.getLong("maxTime", -1);
+		List<NondominatedPopulation> results =
+				new ArrayList<NondominatedPopulation>();		
+		progress.start(numberOfSeeds, maxEvaluations, maxTime);	
+		for (int i = 0; i < numberOfSeeds && !isCanceled.get(); i++) {		
+			NondominatedPopulation result = runSingleSeed(i+1, numberOfSeeds,
+					createTerminationCondition());	
+			if (result != null) {
+				results.add(result);
+				progress.nextSeed();
+			}				
+		}
+		progress.stop();
 		return results;
 	}
 	
@@ -739,6 +810,7 @@ public class Executor extends ProblemBuilder {
 	 * @return the end-of-run approximation set; or {@code null} if canceled
 	 */
 	public NondominatedPopulation run() {
+		//System.out.println("Hello from run() in Executor.java");
 		isCanceled.set(false);
 		return runSingleSeed(1, 1, createTerminationCondition());
 	}
@@ -779,7 +851,7 @@ public class Executor extends ProblemBuilder {
 				}
 				
 				NondominatedPopulation result = newArchive();
-				
+				//System.out.println("Helo from : NondominatedPopulation result = newArchive(); in Executor.java");
 				try {
 					if (algorithmFactory == null) {
 						algorithm = AlgorithmFactory.getInstance().getAlgorithm(
