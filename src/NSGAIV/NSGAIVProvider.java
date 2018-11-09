@@ -12,8 +12,6 @@ import org.moeaframework.core.spi.OperatorFactory;
 import org.moeaframework.util.TypedProperties;
 
 
-import org.moeaframework.core.EpsilonBoxDominanceArchive;
-import org.moeaframework.core.FitnessEvaluator;
 import org.moeaframework.core.FrameworkException;
 
 import org.moeaframework.core.NondominatedPopulation;
@@ -44,7 +42,8 @@ public class NSGAIVProvider extends AlgorithmProvider {
 			
 			// allow the user to customize the population size (default to 100)
 			int populationSize = typedProperties.getInt("populationSize", 100);
-			
+			System.out.println("Hello from NSGAIV provider");
+			typedProperties.setBoolean("org.moeaframework.core.fast_nondominated_sorting",true);
 			// initialize the algorithm with randomly-generated solutions
 			Initialization initialization = new RandomInitialization(problem, populationSize);
 			

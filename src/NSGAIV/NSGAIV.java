@@ -77,20 +77,20 @@ public class NSGAIV extends AbstractEvolutionaryAlgorithm implements
 	 * @param variation the variation operator
 	 * @param initialization the initialization method
 	 */
-	public NSGAIV(Problem problem, NSGAIVNondominatedSortingPopulation population,
+	public NSGAIV(Problem problem, NSGAIVNondominatedSortingPopulation population1,
 			EpsilonBoxDominanceArchive archive, Selection selection,
 			Variation variation, Initialization initialization) {
-		super(problem, population, archive, initialization);
+		super(problem, population1, archive, initialization);
 		this.selection = selection;
 		this.variation = variation;
 	}
 
 	@Override
 	public void iterate() {
-		NSGAIVNondominatedSortingPopulation population = getPopulation();
+		NSGAIVNondominatedSortingPopulation population1 = getPopulation();
 		EpsilonBoxDominanceArchive archive = getArchive();
 		Population offspring = new Population();
-		int populationSize = population.size();
+		int populationSize = population1.size();
 
 		if (selection == null) {
 			// recreate the original NSGA-II implementation using binary
@@ -107,7 +107,7 @@ public class NSGAIV extends AbstractEvolutionaryAlgorithm implements
 				while (pool.size() < 2*variation.getArity()) {
 					List<Solution> poolAdditions = new ArrayList<Solution>();
 					
-					for (Solution solution : population) {
+					for (Solution solution : population1) {
 						poolAdditions.add(solution);
 					}
 					
@@ -133,7 +133,7 @@ public class NSGAIV extends AbstractEvolutionaryAlgorithm implements
 			// using custom selection operators
 			while (offspring.size() < populationSize) {
 				Solution[] parents = selection.select(variation.getArity(),
-						population);
+						population1);
 
 				offspring.addAll(variation.evolve(parents));
 			}
@@ -145,8 +145,11 @@ public class NSGAIV extends AbstractEvolutionaryAlgorithm implements
 			archive.addAll(offspring);
 		}
 
-		population.addAll(offspring);
-		population.truncate(populationSize);
+		population1.addAll(offspring);
+		//population1.truncate(populationSize);
+		System.out.println("After addAll");
+		population1.prune(populationSize);
+		System.out.println("-----------------finish truncate in NSGAIV.java--------------------------------");
 	}
 
 	@Override

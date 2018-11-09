@@ -18,6 +18,7 @@
 package NSGAIV;
 import org.moeaframework.core.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.moeaframework.core.comparator.DominanceComparator;
  * NSGA-II." IEEE Transactions on Evolutionary Computation. 6(2):182-197.
  * </ol>
  */
-public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
+public class NSGAIVFastNondominatedSorting extends FastNondominatedSorting {
 
 	/**
 	 * Constructs a fast non-dominated sorting operator using Pareto dominance.
@@ -91,6 +92,7 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 		List<List<Integer>> dominatedList = new ArrayList<List<Integer>>();
 		List<List<Integer>> equivalentList = new ArrayList<List<Integer>>();
 		List<Integer> currentFront = new ArrayList<Integer>();
+		List<Integer> lastFront = new ArrayList<Integer>();
 		
 		List<Integer> AllFront = new ArrayList<Integer>();
 		for (int i = 0; i < N; i++)
@@ -124,6 +126,9 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 			if (dominatedCount == 0) {
 				currentFront.add(i);
 			}
+			if (dominatesCount == 0) {
+				lastFront.add(i);
+			}
 			
 			dominatesList.add(dominates);
 			dominatedCounts[i] = dominatedCount;
@@ -137,12 +142,13 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 		
 		// assign ranks
 		int rank = 0;
+		int lastrank = N;
 		for (int i=0; i< currentFront.size(); i++) {
 			
 			AllFront.remove(currentFront.get(i));
 		}		
 		int nextFrontCount = equivalentCounts[currentFront.get(0)];
-		while (!AllFront.isEmpty()) {
+/*		while (!AllFront.isEmpty()) {
 			
 			List<Integer> nextFront = new ArrayList<Integer>();
 			List<Integer> currentFrontInternal = new ArrayList<Integer>();
@@ -165,11 +171,11 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 			}
 			nextFrontCount = nextFrontCount + equivalentCounts[currentFrontInternal.get(0)];
 			rank +=1;
+			
 			currentFront = currentFrontInternal;
-			System.out.println("------Alalalalalalallalalalala-------");
 			AllFront = nextFront;
 		}
-/*		
+*/		
 		while (!currentFront.isEmpty()) {
 			List<Integer> nextFront = new ArrayList<Integer>();
 			Population solutionsInFront = new Population();
@@ -195,6 +201,6 @@ public class NSGAIVFastNondominatedSorting extends NondominatedSorting {
 			rank += 1;
 			currentFront = nextFront;
 		}
-*/	}
+	}
 
 }

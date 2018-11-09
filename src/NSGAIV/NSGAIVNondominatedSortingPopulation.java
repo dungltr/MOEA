@@ -16,9 +16,10 @@
  * along with the MOEA Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 package NSGAIV;
-
+import NSGAIV.writeMatrix2CSV;
 import static org.moeaframework.core.NondominatedSorting.RANK_ATTRIBUTE;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -75,8 +76,10 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		
 		if (Settings.useFastNondominatedSorting()) {
 			nondominatedSorting = new NSGAIVFastNondominatedSorting(comparator);
+			System.out.println("Using FastNondominatedSorting");
 		} else {
-			nondominatedSorting = new NondominatedSorting(comparator);
+			nondominatedSorting = new NSGAIVNondominatedSorting(comparator);
+			System.out.println("Using OriginNondominatedSorting");
 		}
 	}
 
@@ -167,7 +170,7 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		if (modified) {
 			update();
 		}
-
+		System.out.println("From NSGAIVNondominatedSorting.truncate.2");
 		super.truncate(size, comparator);
 	}
 
@@ -179,6 +182,7 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 	 */
 	public void truncate(int size) {
 		truncate(size, new NondominatedSortingComparator());
+		System.out.println("From NSGAIVNondoinatedSortingPopulation.truncate");
 	}
 	
 	/**
@@ -192,18 +196,18 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 		if (modified) {
 			update();
 		}
-
 		sort(new RankComparator());
-
+		System.out.println("From NSGAIVNondoinatedSortingPopulation.prune");
 		//collect all solutions in the front which must be pruned
 		//note the use of super to prevent repeatedly triggering update()
 		int maxRank = (Integer)super.get(size-1).getAttribute(RANK_ATTRIBUTE);
+		//System.out.println("MaxRank NSGAIVNondoinatedSortingPopulation.prune:=" + maxRank);
 		Population front = new Population();
 
 		for (int i=size()-1; i>=0; i--) {
 			Solution solution = super.get(i);
 			int rank = (Integer)solution.getAttribute(RANK_ATTRIBUTE);
-			
+			//System.out.println("Rank NSGAIVNondoinatedSortingPopulation.prune:=" + rank);
 			if (rank >= maxRank) {
 				super.remove(i);
 			
@@ -212,11 +216,13 @@ public class NSGAIVNondominatedSortingPopulation extends Population {
 				}
 			}
 		}
-		
+		//System.out.println("Front Size NSGAIVNondoinatedSortingPopulation.prune:=" + front.size());
 		//prune front until correct size
 		while (size() + front.size() > size) {
 			nondominatedSorting.updateCrowdingDistance(front);
+			System.out.println("Before truncate");
 			front.truncate(front.size()-1, new CrowdingComparator());
+			
 		}
 		
 		addAll(front);
